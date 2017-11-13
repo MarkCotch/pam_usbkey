@@ -15,8 +15,4 @@ The following scripts are included in this package:
 
 makeusbkey - make a USB Key.
 
-<<<<<<< HEAD
 keytemp - Temporarily Places an SSH Key into a user's account (for diagnostics).
-=======
-keytemp - Places an SSH Key into a users account (for diagnostics).
->>>>>>> 5b696bae8ea9c8d8ebb7a3bc2e15df9470bcd0a0
