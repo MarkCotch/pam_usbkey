@@ -27,6 +27,8 @@
 #include <security/_pam_macros.h>
 #include <libssh2.h>
 #include <syslog.h>
+#include <stdio.h>
+#include <string.h>
 
 #define __APP__ pam_usbkey
 #define USBKEY_CONF /etc/usbkey.conf
