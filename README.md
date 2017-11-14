@@ -9,7 +9,7 @@ corresponding Public SSH Key is present for the requested user ID then
 access is granted.
 
 Required packages:
-BASH, PERL, AT, OpenSSL(-devel), SED, libssh2(-devel)
+BASH, PERL, AT, OpenSSL(-devel), SED, libssh2(-devel), parted-devel
 
 The following scripts are included in this package:
 
