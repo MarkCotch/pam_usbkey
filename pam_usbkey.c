@@ -26,6 +26,7 @@
 #include <security/pam_modules.h>
 #include <security/_pam_macros.h>
 #include <libssh2.h>
+#include <string.h>
 #include <syslog.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,7 +35,7 @@
 #define USBKEY_CONF /etc/usbkey.conf
 
 void l_error (int error);
-
+char *findKeyFOB (void);
 
 PAM_EXTERN int
  pam_sm_authenticate
@@ -44,6 +45,7 @@ PAM_EXTERN int
         const char      *service;
         const char      *user;
         const char      *tty;
+        const char keyFOB[256]={0};
         int             rval;
 
         rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);
@@ -55,6 +57,11 @@ PAM_EXTERN int
         }
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
+
+        findKeyFOB (keyFOB);
+
+        }
+
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
         /* grep "$(ssh-keygen -P PassPhrase -y -f id_rsa.test 2>&1 )" ~/.ssh/authorized_keys */
@@ -76,3 +83,30 @@ void l_error (char* error)
       syslog(LOG_ERR, error);
       closelog();
  }
+
+const char *findKeyFOB(const char *KeyDevice ) {
+  /* const char KeyDevice=[255] = {0}; */
+  char __temp_path[255]={0};
+  struct dirent *_dev_Device;
+  DIR *_devFP=opendir ("/dev");
+  char _buff[100] = { 0 };
+  char _keySig[]="-----BEGIN RSA PRIVATE KEY-----"
+
+  while ( _dev_Device=readdir(_devFP ) {
+    /* Only check "Block" Devices*/
+    if (_dev_dir->d_type != DT_BLK ) { continue; }
+    /* Test if Media is present */
+    /* Read first 32 bytes from block dev looking for SSH Key Signature.*/
+    sprintf (__temp_path, "/dev/%s%c", _dev_dir->d_name, 0 );
+    FILE _FH=fopen( __temp_path, "r");
+    fread(_buff, 1, 31, _FH);
+    fclose(_FH);
+    for (int loop=0 ; loop<32 ; loop++) {
+      if ( _buff[loop] != _keySig[loop] ) { continue; }
+    }
+
+
+  }
+  closedir(_devFP);
+  return (NULL);
+}
