@@ -7,10 +7,10 @@ OBJ = foblib.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 pam_usbkey: $(OBJ)
-	$(CC) -c -o pam_usbkey foblib.o $@ $< $(CFLAGS)
+	$(CC) -c -o pam_usbkey $@ $< $(CFLAGS)
 
 test3.c: $(OBJ)
-	$(CC) -o a.test3 foblib.o $@ $< $(CFLAGS)
+	$(CC) -o a.test3 $@ $< $(CFLAGS)
 
 clean:
 	ls -l *.o
