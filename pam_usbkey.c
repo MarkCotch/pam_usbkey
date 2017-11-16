@@ -42,9 +42,6 @@ PAM_EXTERN int
   (pam_handle_t *pamh, int flags, int argc, const char **argv)
    {
 
-        const char      *service;
-        const char      *user;
-        const char      *tty;
         char keyFOB[256]={0};
         int             rval;
 
