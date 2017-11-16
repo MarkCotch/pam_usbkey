@@ -22,7 +22,6 @@ int main( int argc, char **argv )
     FILE *_blockDev;
     char _buff[100] = { 0 };
     char _devFile[100] = { 0 };
-
     _devFP=opendir ("/dev");
     struct dirent *_dev_dir;
 
@@ -35,12 +34,6 @@ int main( int argc, char **argv )
        fread(_buff, 32, 1, _blockDev);
        /*printf ("/dev/%s \n", _dev_dir->d_name); */
        printf("%s\n", _buff);
-
-       /* _blockDev=fopen ("/dev/&_dev_dir->d_name", "r");
-       fread(_buff, 3, 1, _blockDev);*/
-       printf ("/dev/%s \n", _dev_dir->d_name);
-       printf("%s", _buff);
-
       }
     }
 
