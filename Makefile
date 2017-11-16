@@ -11,3 +11,6 @@ pam_usbkey: $(OBJ)
 
 test3: $(OBJ)
 	$(CC) -o a.test3 foblib.o $(CFLAGS)
+
+clean:
+	ls -l *.o
