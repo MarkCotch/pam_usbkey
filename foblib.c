@@ -19,6 +19,9 @@
 
 */
 
+#include <stdio.h>
+#include <string.h>
+
 void l_error (char* error) {
 
 }
