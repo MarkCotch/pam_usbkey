@@ -43,6 +43,7 @@ char *findKeyFOB(const char *KeyDevice ) {
     /* Read first 32 bytes from block dev looking for SSH Key Signature.*/
     sprintf (__temp_path, "/dev/%s", _dev_Device->d_name );
     FILE *_FH=fopen( __temp_path, "r");
+    if ( ! _FH) { continue; }
     fread(_buff, 1, 31, _FH);
     fclose(_FH);
     int loop;
