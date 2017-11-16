@@ -14,7 +14,7 @@ main() {
 	res=findKeyFOB(buff);
 	if (! res) exit (1) ;
 	printf ("res: %s\n", res);
-	printf ("buff: %s\n" buff);
+	printf ("buff: %s\n", buff);
 	struct stat filePerms;
 	stat (res, &filePerms);
 	printf("0x%o\n", filePerms.st_mode);
