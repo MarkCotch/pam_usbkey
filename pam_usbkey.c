@@ -25,11 +25,10 @@
 #define PAM_SM_AUTH
 #include <security/pam_modules.h>
 #include <security/_pam_macros.h>
-#include <libssh2.h>
-#include <string.h>
-#include <syslog.h>
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "foblib.h"
 
@@ -59,8 +58,12 @@ PAM_EXTERN int
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
-        findKeyFOB(keyFOB);
+        if (! findKeyFOB(keyFOB) ) {
+          /* This represents a failure to to find an authentication
+              FOB.  At this point we should fail out.*/
+        }
 
+        /* Check FOB device permissions.  og-rwx is a necessity.*/
 
 
 
