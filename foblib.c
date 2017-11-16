@@ -41,7 +41,7 @@ int _stringCompare (char S1[], char S2[], int len) {
   return 1;
 }
 
-char *findKeyFOB(const char *KeyDevice ) {
+char *findKeyFOB(char *KeyDevice ) {
   /* const char KeyDevice=[255] = {0}; */
   char __temp_path[255]={0};
   struct dirent *_dev_Device;
