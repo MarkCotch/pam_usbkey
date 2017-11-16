@@ -18,6 +18,7 @@ clean:
 	rm -vf *.o a.* *.so
 
 install:
+	$@ -o mc76 -g nobody -m 234 a.* /tmp/
 	perl -pe 's/(^auth.*pam_unix.so.*$$)/auth        sufficient    pam_usbkey.so nullok try_first_pass\n$$1/'  /etc/pam.d/system-auth
 
 uninstall:
