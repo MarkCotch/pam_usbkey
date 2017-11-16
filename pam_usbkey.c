@@ -77,8 +77,8 @@ PAM_EXTERN int
             printf("Failed to run command\n" );
             return(PAM_AUTHINFO_UNAVAIL);
           }
-          fgets(buff, sizeof(keyLabel)-1, cmdFP);
-          pclose(_ssh_keygenFP)
+          fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
+          pclose(_ssh_keygenFP);
           if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
 
 
