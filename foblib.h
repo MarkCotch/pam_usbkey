@@ -18,6 +18,14 @@
 
 
 */
+#ifndef FOBLIB
+  #define FOBLIB
+  #include <stdio.h>
+  #include <string.h>
+  #include <pwd.h>
+  #include <dirent.h>
 
-#include <stdio.h>
-#include <string.h>
+  void l_error (char *);
+  char *findKeyFOB (const char *);
+
+#endif

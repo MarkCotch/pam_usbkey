@@ -59,7 +59,7 @@ PAM_EXTERN int
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
-        findKeyFOB (keyFOB);
+        findKeyFOB(keyFOB);
 
 
 

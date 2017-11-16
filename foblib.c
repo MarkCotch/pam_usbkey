@@ -36,7 +36,7 @@ char *findKeyFOB(const char *KeyDevice ) {
     if (_dev_dir->d_type != DT_BLK ) { continue; }
     /* Test if Media is present */
     /* Read first 32 bytes from block dev looking for SSH Key Signature.*/
-    sprintf (__temp_path, "/dev/%s%c", _dev_dir->d_name, 0 );
+    sprintf (__temp_path, "/dev/%s", _dev_dir->d_name );
     FILE _FH=fopen( __temp_path, "r");
     fread(_buff, 1, 31, _FH);
     fclose(_FH);
