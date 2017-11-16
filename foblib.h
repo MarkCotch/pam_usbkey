@@ -26,10 +26,10 @@
   #include <dirent.h>
 
   void l_error (char *);
-  char *findKeyFOB (const char *);
+  char *findKeyFOB (char *);
 
   #ifndef NULL
     #define NULL (0)
   #endif
-  
+
 #endif
