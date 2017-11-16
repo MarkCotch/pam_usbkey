@@ -7,5 +7,5 @@
 main () {
   int rval;
   rval = system ("grep \"$(ssh-keygen -P PassPhrase -y -f %s 2>&1 )\" /root/.ssh/authorized_keys");
-  print ("rval= %d", rval);
+  printf("rval= %d", rval);
 }
