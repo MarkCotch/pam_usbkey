@@ -7,7 +7,9 @@ OBJ = foblib.o
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 pam_usbkey: $(OBJ)
-	$(CC) -shared -o $@ $@.c $< $(CFLAGS)
+	$(CC) -c -fPIC $@
+	$(CC) -shared -o $@.so $@.0 $< $(CFLAGS)
+
 
 test%: $(OBJ)
 	$(CC) -o a.$@ $@.c $< $(CFLAGS)
