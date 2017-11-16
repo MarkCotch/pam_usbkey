@@ -16,3 +16,9 @@ test%: $(OBJ)
 
 clean:
 	rm -vf *.o a.* *.so
+
+install:
+	perl -pe 's/(^auth.*pam_unix.so.*$)/auth\tsufficient\ttpam_usbkey.so nullok try_first_pass\n$1/'  /etc/pam.d/system-auth
+
+uninstall:
+	perl -pe 's/(^auth.*pam_usbkey.*\n$//' /etc/pam.d/system-auth
