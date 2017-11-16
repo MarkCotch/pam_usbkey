@@ -68,7 +68,7 @@ PAM_EXTERN int
         sprintf (_tempString, "chmod 600 %s", keyFOB);
         system (_tempString);
 
-        char _cmdString[512]=[0];
+        char _cmdString[512]={0};
         sprintf (_cmdString, "grep \"$(ssh-keygen -P PassPhrase -y -f %s 2>&1 )\" ~/.ssh/authorized_keys", keyFOB);
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
