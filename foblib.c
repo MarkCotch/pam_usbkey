@@ -18,8 +18,20 @@
 
 
 */
+#ifndef FOBLIB
+  #define FOBLIB
+  #include <stdio.h>
+  #include <string.h>
+  #include <pwd.h>
+  #include <dirent.h>
 
-#include "foblib.h"
+  #ifndef NULL
+    #define NULL (0)
+  #endif
+
+#endif
+
+
 
 void l_error (char* error) {
 

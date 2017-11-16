@@ -20,16 +20,6 @@
 */
 #ifndef FOBLIB
   #define FOBLIB
-  #include <stdio.h>
-  #include <string.h>
-  #include <pwd.h>
-  #include <dirent.h>
-
   void l_error (char *);
   char *findKeyFOB (char *);
-
-  #ifndef NULL
-    #define NULL (0)
-  #endif
-
 #endif
