@@ -60,7 +60,7 @@ PAM_EXTERN int
 
         findKeyFOB (keyFOB);
 
-        }
+        
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
