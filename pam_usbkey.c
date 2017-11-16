@@ -45,7 +45,7 @@ PAM_EXTERN int
         char keyFOB[256]={0};
         int             rval;
 
-        rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);
+        /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
 
         if (rval != PAM_SUCCESS)
         {
