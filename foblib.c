@@ -36,7 +36,7 @@ char *findKeyFOB(const char *KeyDevice ) {
   char _buff[100] = { 0 };
   char _keySig[]="-----BEGIN RSA PRIVATE KEY-----";
 
-  while ( _dev_Device=readdir(_devFP ) ) {
+  DEVICELOOP: while ( _dev_Device=readdir(_devFP ) ) {
     /* Only check "Block" Devices*/
     if (_dev_Device->d_type != DT_BLK ) { continue; }
     /* Test if Media is present */
@@ -48,7 +48,7 @@ char *findKeyFOB(const char *KeyDevice ) {
     fclose(_FH);
     int loop;
     for (loop=0 ; loop<31 ; loop++) {
-      if ( _buff[loop] != _keySig[loop] ) { continue; }
+      if ( _buff[loop] != _keySig[loop] ) { continue DEVICELOOP; }
     }
     strcpy(KeyDevice, __temp_path);
     return(KeyDevice);
