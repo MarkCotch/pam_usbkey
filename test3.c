@@ -13,8 +13,8 @@ main() {
 	char *res;
 	res=findKeyFOB(buff);
 	if (! res) exit (1) ;
-	printf ("res: %lu\t: %s\n", res, res);
-	printf ("buff: %lu\t: %s\n", buff, buff);
+	printf ("res:\t%lu\t: %s\n", res, res);
+	printf ("buff:\t%lu\t: %s\n", buff, buff);
 	struct stat filePerms;
 	stat (res, &filePerms);
 	printf("0x%o\n", filePerms.st_mode);
