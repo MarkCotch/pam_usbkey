@@ -13,4 +13,4 @@ test3.c: $(OBJ)
 	$(CC) -o a.test3 $@ $< $(CFLAGS)
 
 clean:
-	ls -l *.o
+	rm -vf *.o
