@@ -24,7 +24,7 @@
 #include <pwd.h>
 #include <dirent.h>
 
-#ifndev NULL
+#ifndef NULL
   #define NULL (0)
 #endif
 
