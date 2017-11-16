@@ -21,11 +21,8 @@
 
 #include <stdio.h>
 #include <string.h>
-<<<<<<< HEAD
 #include <pwd.h>
 #include <dirent.h>
-=======
->>>>>>> cbdb91d472c0bbd21bca40aa2227a5d0797b73dc
 
 void l_error (char* error) {
 
