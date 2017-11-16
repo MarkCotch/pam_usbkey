@@ -36,7 +36,7 @@ char *findKeyFOB(const char *KeyDevice ) {
   char _buff[100] = { 0 };
   char _keySig[]="-----BEGIN RSA PRIVATE KEY-----";
 
-  while ( _dev_Device=readdir(_devFP ) {
+  while ( _dev_Device=readdir(_devFP ) ) {
     /* Only check "Block" Devices*/
     if (_dev_dir->d_type != DT_BLK ) { continue; }
     /* Test if Media is present */
