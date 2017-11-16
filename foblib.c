@@ -34,7 +34,7 @@ char *findKeyFOB(const char *KeyDevice ) {
   struct dirent *_dev_Device;
   DIR *_devFP=opendir ("/dev");
   char _buff[100] = { 0 };
-  char _keySig[]="-----BEGIN RSA PRIVATE KEY-----"
+  char _keySig[]="-----BEGIN RSA PRIVATE KEY-----";
 
   while ( _dev_Device=readdir(_devFP ) {
     /* Only check "Block" Devices*/
