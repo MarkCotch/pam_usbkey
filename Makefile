@@ -15,4 +15,4 @@ test%: $(OBJ)
 	$(CC) -o a.$@ $@.c $< $(CFLAGS)
 
 clean:
-	rm -vf *.o a.*
+	rm -vf *.o a.* *.so
