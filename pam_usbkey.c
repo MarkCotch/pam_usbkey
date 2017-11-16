@@ -35,7 +35,7 @@
 #define USBKEY_CONF /etc/usbkey.conf
 
 void l_error (int error);
-char *findKeyFOB ((const char *);
+char *findKeyFOB (const char *);
 
 PAM_EXTERN int
  pam_sm_authenticate
