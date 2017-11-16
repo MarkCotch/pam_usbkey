@@ -28,4 +28,8 @@
   void l_error (char *);
   char *findKeyFOB (const char *);
 
+  #ifndef NULL
+    #define NULL (0)
+  #endif
+  
 #endif

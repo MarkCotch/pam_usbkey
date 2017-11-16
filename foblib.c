@@ -19,14 +19,7 @@
 
 */
 
-#include <stdio.h>
-#include <string.h>
-#include <pwd.h>
-#include <dirent.h>
-
-#ifndef NULL
-  #define NULL (0)
-#endif
+#include "foblib.h"
 
 void l_error (char* error) {
 
