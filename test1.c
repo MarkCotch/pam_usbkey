@@ -31,7 +31,7 @@ int main( int argc, char **argv )
        printf ("iNode %lu\t: Filename  %s \t: Type: %d \n", _dev_dir->d_ino, _dev_dir->d_name, _dev_dir->d_type);
        sprintf (_devFile, "/dev/%s",_dev_dir->d_name);
        _blockDev=fopen (_devFile, "r");
-       fread(_buff, 32, 1, _blockDev);
+       if (! fread(_buff, 32, 1, _blockDev) ) continue ;
        /*printf ("/dev/%s \n", _dev_dir->d_name); */
        printf("%s\n", _buff);
       }
