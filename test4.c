@@ -7,7 +7,7 @@
 main () {
   int rval;
   FILE *cmdFP;
-  char buff[2048];
+  char buff[2048]={0};
 
   /* rval = system ("grep \"$(ssh-keygen -P PassPhrase -y -f %s 2>&1 )\" /root/.ssh/authorized_keys");
   printf("rval= %d \n", rval); */
