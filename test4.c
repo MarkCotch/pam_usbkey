@@ -12,7 +12,7 @@ main () {
   /* rval = system ("grep \"$(ssh-keygen -P PassPhrase -y -f %s 2>&1 )\" /root/.ssh/authorized_keys");
   printf("rval= %d \n", rval); */
   cmdFP = popen("grep \"$(ssh-keygen -P PassPhrase -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", "r");
-  if (fp == NULL) {
+  if (cmdFP == NULL) {
     printf("Failed to run command\n" );
     exit(1);
   }
