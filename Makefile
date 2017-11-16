@@ -10,7 +10,7 @@ pam_usbkey: $(OBJ)
 	$(CC) -c -o pam_usbkey $@ $< $(CFLAGS)
 
 test%: $(OBJ)
-	$(CC) -o a.$@ $@.c $< $(CFLAGS)
+	$(CC) -o a.$@ $@ $< $(CFLAGS)
 
 clean:
 	rm -vf *.o a.*
