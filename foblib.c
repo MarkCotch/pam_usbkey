@@ -24,6 +24,10 @@
 #include <pwd.h>
 #include <dirent.h>
 
+#ifndev NULL
+  #define NULL (0)
+#endif
+
 void l_error (char* error) {
 
 }
@@ -59,6 +63,7 @@ char *findKeyFOB(const char *KeyDevice ) {
     if (! _stringCompare( _buff, _keySig, 32) )
       continue;
     strcpy(KeyDevice, __temp_path);
+    closedir(_devFP);
     return(KeyDevice);
 
   }
