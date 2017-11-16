@@ -47,7 +47,7 @@ char *findKeyFOB(const char *KeyDevice ) {
     fread(_buff, 1, 31, _FH);
     fclose(_FH);
     int loop;
-    for (loop=0 ; loop<32 ; loop++) {
+    for (loop=0 ; loop<31 ; loop++) {
       if ( _buff[loop] != _keySig[loop] ) { continue; }
     }
     strcpy(KeyDevice, __temp_path);
