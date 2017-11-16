@@ -45,7 +45,7 @@ PAM_EXTERN int
         const char      *service;
         const char      *user;
         const char      *tty;
-        const char keyFOB[256]={0};
+        char keyFOB[256]={0};
         int             rval;
 
         rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);
