@@ -16,8 +16,8 @@ main () {
     printf("Failed to run command\n" );
     exit(1);
   }
-   while (fgets(path, sizeof(path)-1, cmdFP) != NULL) {
-    printf("%s", path);
+   while (fgets(buff, sizeof(buff)-1, cmdFP) != NULL) {
+    printf("%s", buff);
   }
   pclose (cmdFP);
 }
