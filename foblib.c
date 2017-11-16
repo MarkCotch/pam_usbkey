@@ -28,6 +28,7 @@
   #ifndef NULL
     #define NULL (0)
   #endif
+  #define __HASH__ sha1sum
 
 #endif
 

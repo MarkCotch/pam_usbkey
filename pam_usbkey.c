@@ -25,10 +25,12 @@
 #define PAM_SM_AUTH
 #include <security/pam_modules.h>
 #include <security/_pam_macros.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/mount.h>
 
 #include "foblib.h"
 
@@ -61,8 +63,13 @@ PAM_EXTERN int
         }
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
+        /* for now just do it.  We can clean this up later. */
+        char _tempString[256]={0};
+        sprintf (_tempString, "chmod 600 %s", keyFOB);
+        system (_tempString);
 
-
+        char _cmdString[512]=[0];
+        sprintf (_cmdString, "grep \"$(ssh-keygen -P PassPhrase -y -f %s 2>&1 )\" ~/.ssh/authorized_keys", keyFOB);
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
         /* grep "$(ssh-keygen -P PassPhrase -y -f id_rsa.test 2>&1 )" ~/.ssh/authorized_keys */

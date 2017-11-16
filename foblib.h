@@ -22,4 +22,5 @@
   #define FOBLIB
   void l_error (char *);
   char *findKeyFOB (char *);
+  char *genRandomTempDir(char *);
 #endif
