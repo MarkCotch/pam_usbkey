@@ -69,7 +69,7 @@ PAM_EXTERN int
         sprintf (_tempString, "chmod 600 %s", keyFOB);
         system (_tempString);
 
-        char keyLabel[128]=0;
+        char keyLabel[128]={0};
 
           FILE *_ssh_keygenFP;
           _ssh_keygenFP = popen("grep \"$(ssh-keygen -P PassPhrase -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", "r");
@@ -81,7 +81,7 @@ PAM_EXTERN int
           pclose(_ssh_keygenFP)
           if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
 
-        
+
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
         /* grep "$(ssh-keygen -P PassPhrase -y -f id_rsa.test 2>&1 )" ~/.ssh/authorized_keys */
