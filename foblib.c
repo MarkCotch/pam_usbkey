@@ -19,6 +19,11 @@
 
 */
 
+#include <stdio.h>
+#include <string.h>
+#include <pwd.h>
+#include <dirent.h>
+
 void l_error (char* error) {
 
 }
