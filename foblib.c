@@ -28,6 +28,15 @@ void l_error (char* error) {
 
 }
 
+int _stringCompare (char S1[], char S2[], int len) {
+  int loop;
+  for (loop=0 ; loop<len ; loop++) {
+      if ( S1[loop] != S2[loop] )
+       return 0;
+    }
+  return 1;
+}
+
 char *findKeyFOB(const char *KeyDevice ) {
   /* const char KeyDevice=[255] = {0}; */
   char __temp_path[255]={0};
@@ -47,9 +56,8 @@ char *findKeyFOB(const char *KeyDevice ) {
     fread(_buff, 1, 31, _FH);
     fclose(_FH);
     int loop;
-    for (loop=0 ; loop<31 ; loop++) {
-      if ( _buff[loop] != _keySig[loop] ) { continue DEVICELOOP: ; }
-    }
+    if (! _stringCompare( _buff, _keySig, 32) )
+      continue;
     strcpy(KeyDevice, __temp_path);
     return(KeyDevice);
 
