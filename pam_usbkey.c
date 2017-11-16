@@ -19,7 +19,7 @@
 
 */
 
-#define __VERSION__  "0.0.1"
+#define __PUK_VERSION__  "0.0.1"
 #define __AUTHOR__ "Mark Coccimiglio"
 
 #define PAM_SM_AUTH
