@@ -50,6 +50,7 @@ PAM_EXTERN int
         const char  *token;
         int             rval;
 
+        l_record("pam_usbkey called.");
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
         rval= pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service );
         if (rval != PAM_SUCCESS) {
@@ -82,18 +83,18 @@ PAM_EXTERN int
 
         char keyLabel[128]={0};
 
-          FILE *_ssh_keygenFP;
-          char cmdString[256]={0};
-          sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token);
-          _ssh_keygenFP = popen(cmdString, "r");
-          if (_ssh_keygenFP == NULL) {
-            printf("Failed to run command\n" );
-            return(PAM_AUTHINFO_UNAVAIL);
-          }
-          fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
-          pclose(_ssh_keygenFP);
-          if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
-
+        FILE *_ssh_keygenFP;
+        char cmdString[256]={0};
+        sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token);
+        _ssh_keygenFP = popen(cmdString, "r");
+        if (_ssh_keygenFP == NULL) {
+          printf("Failed to run command\n" );
+          return(PAM_AUTHINFO_UNAVAIL);
+        }
+        fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
+        pclose(_ssh_keygenFP);
+        if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
+        l_record("");
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
