@@ -64,7 +64,7 @@ PAM_EXTERN int
           l_record(_tempString);
           return (PAM_AUTH_ERR);
         }
-        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token ) !=  PAM_SUCCESS || !token || !*token); {
+        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token ) !=  PAM_SUCCESS ); {
           sprintf (_tempString, "Unable to retrieve the PAM token for :%s", token);
           l_record(_tempString);
           return (PAM_AUTH_ERR);
