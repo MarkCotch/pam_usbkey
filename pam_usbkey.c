@@ -49,23 +49,28 @@ PAM_EXTERN int
         const char  *user;
         const char  *token;
         int             rval;
+        char _tempString[256]={0};
+
 
         l_record("pam_usbkey called.");
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
-        rval= pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service );
-        if (rval != PAM_SUCCESS) {
-          l_record("Unable to retrieve the PAM service name.\n");
+        if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service {
+          sprintf (_tempString, "Unable to retrieve the PAM service name for :%s", service);
+          l_record(_tempString);
           return (PAM_AUTH_ERR);
         }
-        if (pam_get_user(pamh, &user, NULL) != PAM_SUCCESS || !user || !*user) {
-          l_record("Unable to retrieve the PAM user name.\n");
+        if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
+          sprintf (_tempString, "Unable to retrieve the PAM user name for :%s", user);
+          l_record(_tempString);
           return (PAM_AUTH_ERR);
         }
-        rval=pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
-        if (rval != PAM_SUCCESS ) {
-          l_record("Unable to retrieve the PAM Token.\n");
+        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token ) !=  PAM_SUCCESS || !token || !*token); {
+          sprintf (_tempString, "Unable to retrieve the PAM token for :%s", token);
+          l_record(_tempString);
           return (PAM_AUTH_ERR);
         }
+        sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
+        l_record(_tempString);
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
@@ -77,7 +82,6 @@ PAM_EXTERN int
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
-        char _tempString[256]={0};
         sprintf (_tempString, "chmod 600 %s", keyFOB);
         system (_tempString);
 
