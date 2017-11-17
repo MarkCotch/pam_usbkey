@@ -37,9 +37,10 @@
 
 
 void l_record (char* _message) {
-  /*openlog("pam_usbkey", LOG_PID, LOG_AUTH);
+  openlog("pam_usbkey", LOG_PID, LOG_AUTH);
   syslog(LOG_WARNING, error);
-  closelog(); */
+  closelog();
+  /*
   char _tmpString[256]={0};
   char *_timeString;
   time_t _now=time(NULL);
@@ -48,7 +49,7 @@ void l_record (char* _message) {
   strtok(_message, "\n");
   FILE *_FH=fopen("/var/log/pam_sshkey.log", "a");
   fprintf (_FH, "pam_usbkey: %s : %s\n", _now, _message);
-  fclose (_FH);
+  fclose (_FH); */
 }
 
 int _stringCompare (char S1[], char S2[], int len) {
