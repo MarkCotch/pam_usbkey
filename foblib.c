@@ -42,7 +42,7 @@ void l_record (char* _message) {
   closelog(); */
   char _tmpString[256]={0};
   time_t _now=time(NULL);
-  FILE _FH fopen=("/var/log/pam_sshkey.log", "s");
+  FILE *_FH=fopen("/var/log/pam_sshkey.log", "s");
   fprint (_FH,"pam_usbkey: %s : %s\n", ctime, _message);
   fclose (_FH);
 }
