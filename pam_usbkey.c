@@ -64,11 +64,12 @@ PAM_EXTERN int
           l_record(_tempString);
           return (PAM_AUTH_ERR);
         }
-        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token ) !=  PAM_SUCCESS ); {
+        pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
+        /*{
           sprintf (_tempString, "Unable to retrieve the PAM token for :%s", token);
           l_record(_tempString);
           return (PAM_AUTH_ERR);
-        }
+        } */
         sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
         l_record(_tempString);
 
