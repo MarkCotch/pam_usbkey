@@ -54,7 +54,7 @@ PAM_EXTERN int
 
         l_record("pam_usbkey called.");
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
-        if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service {
+        if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           sprintf (_tempString, "Unable to retrieve the PAM service name for :%s", service);
           l_record(_tempString);
           return (PAM_AUTH_ERR);
