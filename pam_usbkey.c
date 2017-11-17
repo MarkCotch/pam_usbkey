@@ -36,7 +36,7 @@
 
 #define __APP__ pam_usbkey
 #define USBKEY_CONF /etc/usbkey.conf
-
+#define __DEBUG__ (1)
 
 
 PAM_EXTERN int
@@ -95,7 +95,7 @@ PAM_EXTERN int
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
         sprintf (_tempString,"Credentials Approved for %s .\n", keyLabel);
-        l_record(keyLabel);
+        l_record(_tempString);
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
@@ -103,7 +103,7 @@ PAM_EXTERN int
 
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
-        return (PAM_AUTHINFO_UNAVAIL);
+        return (PAM_SUCCESS);
   }
 
 PAM_EXTERN int
