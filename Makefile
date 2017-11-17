@@ -18,7 +18,7 @@ clean:
 	rm -vf *.o a.* *.so
 
 install:
-	$@ -v -o root -g root -m 700 pam_usbkey.so /usr/lib64/security/
+	$@ -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/auth        sufficient    pam_usbkey.so nullok try_first_pass\n$$1/'  /etc/pam.d/system-auth
 
 uninstall:
