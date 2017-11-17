@@ -4,7 +4,7 @@ DEPS = foblib.h
 OBJ = foblib.o
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -fPIC -o $@ $< $(CFLAGS)
 
 pam_usbkey: $(OBJ)
 	$(CC) -c -fPIC $@.c $(CFLAGS)
