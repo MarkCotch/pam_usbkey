@@ -86,7 +86,7 @@ PAM_EXTERN int
         sprintf (_tempString, "chmod 600 %s", keyFOB);
         system (_tempString);
 
-        char keyLabel[128]={0};
+        char keyLabel[4096]={0};
 
         FILE *_ssh_keygenFP;
         char cmdString[256]={0};
@@ -99,7 +99,7 @@ PAM_EXTERN int
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
-        fgets(keyLabel, 127, _ssh_keygenFP);
+        fgets(keyLabel, 4095, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
         sprintf (_tempString,"Credentials Approved for %s .\n", keyLabel);
