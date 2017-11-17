@@ -94,7 +94,8 @@ PAM_EXTERN int
         fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
-        l_record("");
+        sprintf (_tempString,"Credentials Approved for %s .\n", keyLabel);
+        l_record(keyLabel);
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
@@ -102,6 +103,7 @@ PAM_EXTERN int
 
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
+        return (PAM_AUTHINFO_UNAVAIL);
   }
 
 PAM_EXTERN int
