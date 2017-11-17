@@ -41,11 +41,13 @@ void l_record (char* _message) {
   syslog(LOG_WARNING, error);
   closelog(); */
   char _tmpString[256]={0};
+  char *_timeString;
   time_t _now=time(NULL);
-  sprintf (_tmpString, "pam_usbkey: %s : %s", strtok(ctime(_now), "\n"), _message);
-  strtok(_tmpString, "\n");
+  _timeString=ctime(_now);
+  strtok(_timeString, "\n");
+  strtok(_message, "\n");
   FILE *_FH=fopen("/var/log/pam_sshkey.log", "a");
-  fprintf (_FH,"%s\n", _tmpString);
+  fprintf (_FH, "pam_usbkey: %s : %s\n", _now, _message);
   fclose (_FH);
 }
 
