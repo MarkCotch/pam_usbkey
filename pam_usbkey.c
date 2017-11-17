@@ -61,9 +61,9 @@ PAM_EXTERN int
           return (PAM_AUTH_ERR);
         }
         rval=pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
-        if (rval !- PAM_SUCCESS ) {
+        if (rval != PAM_SUCCESS ) {
           l_record("Unable to retrieve the PAM Token.\n");
-          return (PAM_AUTH_ERROR);
+          return (PAM_AUTH_ERR);
         }
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
@@ -84,7 +84,7 @@ PAM_EXTERN int
 
           FILE *_ssh_keygenFP;
           char cmdString[256]={0};
-          sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token)
+          sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token);
           _ssh_keygenFP = popen(cmdString, "r");
           if (_ssh_keygenFP == NULL) {
             printf("Failed to run command\n" );
