@@ -43,7 +43,7 @@ void l_record (char* _message) {
   char _tmpString[256]={0};
   char *_timeString;
   time_t _now=time(NULL);
-  _timeString=ctime(_now);
+  _timeString=ctime(&_now);
   strtok(_timeString, "\n");
   strtok(_message, "\n");
   FILE *_FH=fopen("/var/log/pam_sshkey.log", "a");
