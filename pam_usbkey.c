@@ -45,14 +45,25 @@ PAM_EXTERN int
    {
 
         char keyFOB[256]={0};
+        const char  *service;
+        const char  *user;
+        const char  *token;
         int             rval;
 
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
-
-        if (rval != PAM_SUCCESS)
-        {
-                l_error("Unable to retrieve the PAM service name.\n");
-                return (PAM_AUTH_ERR);
+        rval= pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service );
+        if (rval != PAM_SUCCESS) {
+          l_record("Unable to retrieve the PAM service name.\n");
+          return (PAM_AUTH_ERR);
+        }
+        if (pam_get_user(pamh, &user, NULL) != PAM_SUCCESS || !user || !*user) {
+          l_record("Unable to retrieve the PAM user name.\n");
+          return (PAM_AUTH_ERR);
+        }
+        rval=pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
+        if (rval !- PAM_SUCCESS ) {
+          l_record("Unable to retrieve the PAM Token.\n");
+          return (PAM_AUTH_ERROR);
         }
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
@@ -72,7 +83,9 @@ PAM_EXTERN int
         char keyLabel[128]={0};
 
           FILE *_ssh_keygenFP;
-          _ssh_keygenFP = popen("grep \"$(ssh-keygen -P PassPhrase -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", "r");
+          char cmdString[256]={0};
+          sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token)
+          _ssh_keygenFP = popen(cmdString, "r");
           if (_ssh_keygenFP == NULL) {
             printf("Failed to run command\n" );
             return(PAM_AUTHINFO_UNAVAIL);
