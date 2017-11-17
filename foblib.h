@@ -20,7 +20,7 @@
 */
 #ifndef FOBLIB
   #define FOBLIB
-  void l_error (char *);
+  void l_record (char *);
   char *findKeyFOB (char *);
   char *genRandomTempDir(char *);
 #endif

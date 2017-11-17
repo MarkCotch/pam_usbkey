@@ -24,6 +24,7 @@
   #include <string.h>
   #include <pwd.h>
   #include <dirent.h>
+  #include <syslog.h>
 
   #ifndef NULL
     #define NULL (0)
@@ -34,8 +35,10 @@
 
 
 
-void l_error (char* error) {
-
+void l_record (char* error) {
+  openlog("pam_usbkey", LOG_PID, LOG_AUTH);
+  syslog(LOG_NOTICE, error);
+  closelog();
 }
 
 int _stringCompare (char S1[], char S2[], int len) {
