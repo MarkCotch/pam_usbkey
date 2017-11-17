@@ -22,6 +22,7 @@
   #define FOBLIB
   #include <stdio.h>
   #include <string.h>
+  #include <time.h>
   #include <pwd.h>
   #include <dirent.h>
   #include <syslog.h>
@@ -43,7 +44,7 @@ void l_record (char* _message) {
   time_t _now=time(NULL);
   FILE _FH fopen=("/var/log/pam_sshkey.log", "s");
   fprint (_FH,"pam_usbkey: %s : %s\n", ctime, _message);
-  fclose (_FH);  
+  fclose (_FH);
 }
 
 int _stringCompare (char S1[], char S2[], int len) {
