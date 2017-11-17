@@ -37,7 +37,7 @@
 
 void l_record (char* error) {
   openlog("pam_usbkey", LOG_PID, LOG_AUTH);
-  syslog(KERN_NOTICE, error);
+  syslog(LOG_WARNING, error);
   closelog();
 }
 
