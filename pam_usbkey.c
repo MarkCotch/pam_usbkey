@@ -90,8 +90,8 @@ PAM_EXTERN int
 
         FILE *_ssh_keygenFP;
         char cmdString[256]={0};
-        /* sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys | cut -d' ' -f3", token); */
-        sprintf(cmdString, "ssh-keygen -P %s -y -f /dev/vdb1 2>&1", token );
+        sprintf(cmdString, "grep \"$(ssh-keygen -P %s -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys", token);
+        /* sprintf(cmdString, "ssh-keygen -P %s -y -f /dev/vdb1 2>&1", token ); */
         _ssh_keygenFP = popen(cmdString, "r");
         sleep (2);
         if (_ssh_keygenFP == NULL) {
@@ -111,7 +111,8 @@ PAM_EXTERN int
 
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
-        return (PAM_SUCCESS);
+        /* return (PAM_SUCCESS); */
+        return (PAM_AUTHINFO_UNAVAIL);
   }
 
 PAM_EXTERN int
