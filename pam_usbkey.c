@@ -110,7 +110,7 @@ PAM_EXTERN int
           l_record(_tempString);
           return(PAM_AUTHINFO_UNAVAIL);
         }
-        sprintf (_tempString,"Credentials Approved for %s:%s", user, keyLabel);
+        sprintf (_tempString,"Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
         l_record(_tempString);
 
 

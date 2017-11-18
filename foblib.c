@@ -61,6 +61,15 @@ int _stringCompare (char S1[], char S2[], int len) {
   return 1;
 }
 
+char *findKeyTag(char _pubKey[]) {
+  char *retval;
+  int loop=strlen(_pubKey)-1;
+  for ( ; loop ; loop--) {
+    if (_pubKey[loop]=' ' return (&_pubKey[loop+1]);
+  }
+  return (NULL);
+}
+
 char *findKeyFOB(char *KeyDevice ) {
   /* const char KeyDevice=[255] = {0}; */
   char __temp_path[255]={0};
