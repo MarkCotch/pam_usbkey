@@ -23,5 +23,5 @@
   void l_record (char *);
   char *findKeyFOB (char *);
   char *genRandomTempDir(char *);
-  int _stringCompare (char *, char *, int)
+  int _stringCompare (char *, char *, int);
 #endif
