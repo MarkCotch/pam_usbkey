@@ -25,4 +25,4 @@ install:
 uninstall:
 	rm -vf /usr/lib64/security/pam_usbkey.so
 	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/system-auth
-	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/sshd
+	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/password-auth
