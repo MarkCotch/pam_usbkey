@@ -65,7 +65,7 @@ char *findKeyTag(char _pubKey[]) {
   char *retval;
   int loop=strlen(_pubKey)-1;
   for ( ; loop ; loop--) {
-    if (_pubKey[loop]=' ' return (&_pubKey[loop+1]);
+    if (_pubKey[loop]=' ') return (&_pubKey[loop+1]);
   }
   return (NULL);
 }
