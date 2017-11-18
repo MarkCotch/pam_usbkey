@@ -78,6 +78,7 @@ PAM_EXTERN int
         if (! findKeyFOB(keyFOB) ) {
           /* This represents a failure to to find an authentication
               FOB.  At this point we should fail out.*/
+          l_record("No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL");
           return (PAM_AUTHINFO_UNAVAIL);
         }
 
