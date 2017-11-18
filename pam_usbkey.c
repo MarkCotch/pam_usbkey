@@ -94,7 +94,7 @@ PAM_EXTERN int
         sprintf(cmdString, "grep \"$(ssh-keygen -P \"%s\" -y -f /dev/vdb1 2>&1 )\" /root/.ssh/authorized_keys", token);
         /* sprintf(cmdString, "ssh-keygen -P %s -y -f /dev/vdb1 2>&1", token ); */
         _ssh_keygenFP = popen(cmdString, "r");
-        sleep (2);
+        /* sleep (2); */
         if (_ssh_keygenFP == NULL) {
           printf("Failed to run command\n" );
           return(PAM_AUTHINFO_UNAVAIL);
@@ -103,7 +103,7 @@ PAM_EXTERN int
         fgets(keyLabel, 4095, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
-        if (! _stringCompare( "ssh-rsa", keyLabel, 6 ) ) {
+        if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
           sprintf (_tempString,"Credentials NOT Approved for %s:%s", user, keyLabel);
           l_record(_tempString);
           return(PAM_AUTHINFO_UNAVAIL);
