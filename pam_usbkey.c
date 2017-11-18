@@ -103,11 +103,11 @@ PAM_EXTERN int
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
         if (! _stringCompare( "ssh-rsa", keyLabel, 6 ) ) {
-          sprintf (_tempString,"Credentials NOT Approved for %s .\n", user);
+          sprintf (_tempString,"Credentials NOT Approved for %s:%s", user, keyLabel);
           l_record(_tempString);
           return(PAM_AUTHINFO_UNAVAIL);
         }
-        sprintf (_tempString,"Credentials Approved for %s:%s .\n", user, keyLabel);
+        sprintf (_tempString,"Credentials Approved for %s:%s", user, keyLabel);
         l_record(_tempString);
 
 
