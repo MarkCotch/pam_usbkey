@@ -70,8 +70,8 @@ PAM_EXTERN int
           l_record(_tempString);
           return (PAM_AUTH_ERR);
         } */
-        sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
-        l_record(_tempString);
+        /* sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
+        l_record(_tempString); */
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
