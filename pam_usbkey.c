@@ -116,8 +116,8 @@ PAM_EXTERN int
 
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
-        /* return (PAM_SUCCESS); */
-        return (PAM_AUTHINFO_UNAVAIL);
+        return (PAM_SUCCESS);
+        /* return (PAM_AUTHINFO_UNAVAIL); */
   }
 
 PAM_EXTERN int
