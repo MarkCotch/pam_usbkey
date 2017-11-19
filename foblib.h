@@ -25,4 +25,5 @@
   char *genRandomTempDir(char *);
   int _stringCompare (char *, char *, int);
   char *findKeyTag(char *);
+  int testForBadChar(char*);
 #endif

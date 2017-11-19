@@ -61,6 +61,20 @@ int _stringCompare (char S1[], char S2[], int len) {
   return 1;
 }
 
+int testForBadChar(char _testString[]){
+  /* Bad Characters  "   '   $  *   \         */
+  char badChars[]={ 34, 39, 36, 42, 92, 0};
+  int loop;
+  int slen=strlen()
+  for (loop=0 ; _testString[loop] ; loop++){
+        int iloop;
+        for (iloop=0 ; badChars[iloop] ; iloop++) {
+          if (_testString[loop] == badChars[iloop] ) return (NULL);
+        }
+  }
+  return ( !NULL );
+}
+
 char *findKeyTag(char _pubKey[]) {
   char *retval;
   int loop=strlen(_pubKey)-1;

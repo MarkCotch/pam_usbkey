@@ -73,6 +73,9 @@ PAM_EXTERN int
         /* sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
         l_record(_tempString); */
 
+        /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
+        if ( testForBadChar(token) ) { return (PAM_AUTH_ERR); }
+
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
         if (! findKeyFOB(keyFOB) ) {
