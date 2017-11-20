@@ -72,7 +72,7 @@ int testForBadChar(const char _testString[]){
   for (loop=0 ; _testString[loop] ; loop++){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
-          l_record ("testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]);
+          syslog ("testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]);
           if (_testString[loop] == badChars[iloop] ) return ( (int) NULL);
         }
   }
