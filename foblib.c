@@ -29,8 +29,12 @@
 
   #ifndef FALSE
     #define FALSE (0)
+  #endif
+  #ifndef TRUE
     #define TRUE (!FALSE)
   #endif
+
+
   #define __HASH__ sha1sum
 
 #endif
