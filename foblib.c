@@ -34,8 +34,6 @@
 
 #endif
 
-void l_record (char* _message, ...);
-
 void l_record (char* _message, void **printParam) {
   openlog("pam_usbkey", LOG_PID, LOG_AUTH);
   syslog(LOG_WARNING, _message, printParam);
