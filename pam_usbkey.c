@@ -86,7 +86,7 @@ PAM_EXTERN int
           return (PAM_AUTHINFO_UNAVAIL);
         }
         closedir (_homeDIR);
-        if (__MYDEBUG__) l_record("we have validated home dir: %d", _userInfo->pw_dir);
+        if (__MYDEBUG__) l_record("we have validated home dir: %s", _userInfo->pw_dir);
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         if ( testForBadChar(token) ) {
