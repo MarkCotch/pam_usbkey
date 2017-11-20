@@ -72,7 +72,10 @@ PAM_EXTERN int
         l_record(_tempString); */
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
-        if ( testForBadChar(token) ) { return (PAM_AUTH_ERR); }
+        if ( testForBadChar(token) ) {
+          l_record ("Bad Character(s) in token: %s", token );
+          return (PAM_AUTH_ERR);
+        }
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
@@ -82,8 +85,7 @@ PAM_EXTERN int
           l_record("No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL");
           return (PAM_AUTHINFO_UNAVAIL);
         }
-        sprintf (_tempString, "Found Authentication FOB %s", keyFOB );
-        l_record(_tempString);
+        l_record (_tempString, "Found Authentication FOB %s", keyFOB );
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
@@ -111,7 +113,7 @@ PAM_EXTERN int
                     return(PAM_AUTHINFO_UNAVAIL);
         }
         l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
-        
+
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
