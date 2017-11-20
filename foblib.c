@@ -86,7 +86,7 @@ char *sanitizeString( char _sanitizeThisString[] ){
     int destPos=0;
     do {
 
-    } while ();
+    } while ( 0 );
     return (_sanitizeThisString);
 }
 
