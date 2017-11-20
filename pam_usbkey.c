@@ -31,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mount.h>
+#include <pwd.h>
 
 #include "foblib.h"
 
@@ -52,6 +53,7 @@ PAM_EXTERN int
         char _tempString[256]={0};
 
 
+
         l_record("pam_usbkey called.");
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
@@ -70,6 +72,19 @@ PAM_EXTERN int
         } */
         /* sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
         l_record(_tempString); */
+
+        /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
+        struct passwd _userInfo=getpwnam(user);
+        if (! _userInfo) {
+          l_record ("Unable to locate user ID : %s", user);
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+        if (! DIR *_homeDIR=opendir (_userInfo->pw_dir) {
+          l_record("User home directory: %s not found on system.", _userInfo->pw_dir);
+          closedir (_homeDIR);
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+        closedir (_homeDIR);
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         if ( testForBadChar(token) ) {
