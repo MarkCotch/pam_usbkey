@@ -74,7 +74,7 @@ int testForBadChar(const char _testString[]){
           if (_testString[loop] == badChars[iloop] ) return ( 0 );
         }
   }
-  return ( ! 0 );
+  return ( 1 );
 }
 
 char *findKeyTag(char _pubKey[]) {
