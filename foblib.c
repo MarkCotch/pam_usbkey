@@ -71,10 +71,10 @@ int testForBadChar(const char _testString[]){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
           syslog (LOG_WARNING, "testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]);
-          if (_testString[loop] == badChars[iloop] ) return ( (int) NULL);
+          if (_testString[loop] == badChars[iloop] ) return ( 0 );
         }
   }
-  return ( !NULL );
+  return ( ! 0 );
 }
 
 char *findKeyTag(char _pubKey[]) {
