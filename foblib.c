@@ -67,7 +67,7 @@ char *sanitizeString( char _sanitizeThisString[] ){
     /* Bad Characters need to be escaped  "   '   $  *   \     */
 }
 
-int testForBadChar(const char _testString[]){
+int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
   char badChars[]={ 34, 39, 36, 42, 92, 0};
   int loop;
