@@ -24,6 +24,6 @@
   char *findKeyFOB (char *);
   char *genRandomTempDir(char *);
   int _stringCompare (char *, char *, int);
-  char *findKeyTag(char *);
+  char *findKeyTag(const char *);
   int testForBadChar(char*);
 #endif
