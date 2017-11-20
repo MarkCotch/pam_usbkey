@@ -27,8 +27,9 @@
   #include <dirent.h>
   #include <syslog.h>
 
-  #ifndef NULL
-    #define NULL (0)
+  #ifndef FALSE
+    #define FALSE (0)
+    #define TRUE (!FALSE)
   #endif
   #define __HASH__ sha1sum
 
@@ -71,10 +72,10 @@ int testForBadChar(const char _testString[]){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
           syslog (LOG_WARNING, "testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]);
-          if (_testString[loop] == badChars[iloop] ) return ( 0 );
+          if (_testString[loop] == badChars[iloop] ) return ( TRUE );
         }
   }
-  return ( 1 );
+  return ( FALSE );
 }
 
 char *findKeyTag(char _pubKey[]) {
