@@ -99,7 +99,7 @@ PAM_EXTERN int
         _ssh_keygenFP = popen(cmdString, "r");
         /* sleep (2); */
         if (_ssh_keygenFP == NULL) {
-          printf("Failed to run command\n" );
+          printf("Failed to run command" );
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
@@ -107,12 +107,11 @@ PAM_EXTERN int
         pclose(_ssh_keygenFP);
         if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
         if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
-          sprintf (_tempString,"Credentials NOT Approved for %s:%s", user, keyLabel);
-          l_record(_tempString);
-          return(PAM_AUTHINFO_UNAVAIL);
+          l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
+                    return(PAM_AUTHINFO_UNAVAIL);
         }
-        sprintf (_tempString,"Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
-        l_record(_tempString);
+        l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
+        
 
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
