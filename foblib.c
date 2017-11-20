@@ -72,7 +72,7 @@ int testForBadChar(const char _testString[]){
   for (loop=0 ; _testString[loop] ; loop++){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
-          if (_testString[loop] == badChars[iloop] ) return (NULL);
+          if (_testString[loop] == badChars[iloop] ) return ( (int) NULL);
         }
   }
   return ( !NULL );
