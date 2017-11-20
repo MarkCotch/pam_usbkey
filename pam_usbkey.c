@@ -102,7 +102,7 @@ PAM_EXTERN int
           l_record("No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL");
           return (PAM_AUTHINFO_UNAVAIL);
         }
-        l_record (_tempString, "Found Authentication FOB %s", keyFOB );
+        if (__MYDEBUG__) l_record ("Found Authentication FOB %s ", keyFOB );
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
