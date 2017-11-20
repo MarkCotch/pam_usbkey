@@ -7,7 +7,7 @@
 
 #include "foblib.h"
 
-main() {
+int main() {
 
 	char buff[256];
 	char *res;

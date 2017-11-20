@@ -20,7 +20,7 @@
 */
 #ifndef FOBLIB
   #define FOBLIB
-  void l_record (char *);
+  void l_record (char *, ...);
   char *findKeyFOB (char *);
   char *genRandomTempDir(char *);
   int _stringCompare (char *, char *, int);

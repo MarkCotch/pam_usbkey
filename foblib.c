@@ -36,9 +36,9 @@
 
 
 
-void l_record (char* _message) {
+void l_record (char* _message, void **printParam) {
   openlog("pam_usbkey", LOG_PID, LOG_AUTH);
-  syslog(LOG_WARNING, _message);
+  syslog(LOG_WARNING, _message, printParam);
   closelog();
   /*
   char _tmpString[256]={0};
@@ -60,12 +60,15 @@ int _stringCompare (char S1[], char S2[], int len) {
     }
   return 1;
 }
+char *sanitizeString( char _sanitizeThisString[] ){
+    /* Bad Characters need to be escaped  "   '   $  *   \     */
+}
 
 int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
   char badChars[]={ 34, 39, 36, 42, 92, 0};
   int loop;
-  int slen=strlen()
+  // int slen=strlen(_testString)
   for (loop=0 ; _testString[loop] ; loop++){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
