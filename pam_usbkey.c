@@ -87,8 +87,8 @@ PAM_EXTERN int
         if (__MYDEBUG__) l_record("We have validated user: %s ", user);
 
         DIR *_homeDIR;
-        if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
-          l_record("User home directory: %s not found on system.", _userInfo->pw_dir);
+        if (! (_homeDIR=opendir(*_userInfo->pw_dir) ) ) {
+          l_record("User home directory: %s not found on system.", *_userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
