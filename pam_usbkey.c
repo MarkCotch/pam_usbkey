@@ -32,6 +32,7 @@
 #include <sys/stat.h>
 #include <sys/mount.h>
 #include <pwd.h>
+#include <dirent.h>
 
 #include "foblib.h"
 
@@ -74,12 +75,14 @@ PAM_EXTERN int
         l_record(_tempString); */
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
-        struct passwd _userInfo=getpwnam(user);
+        struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
           l_record ("Unable to locate user ID : %s", user);
           return (PAM_AUTHINFO_UNAVAIL);
         }
-        if (! DIR *_homeDIR=opendir (_userInfo->pw_dir) {
+
+        DIR *_homeDIR;
+        if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
           l_record("User home directory: %s not found on system.", _userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
