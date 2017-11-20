@@ -70,13 +70,6 @@ PAM_EXTERN int
         if (__MYDEBUG__) l_record("We have user: %s ", user);
         pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
         if (__MYDEBUG__) l_record("We have token: %s", token);
-        /*{
-          sprintf (_tempString, "Unable to retrieve the PAM token for :%s", token);
-          l_record(_tempString);
-          return (PAM_AUTH_ERR);
-        } */
-        /* sprintf (_tempString, "We have service: %s : user : %s : token : %s ", service, user, token);
-        l_record(_tempString); */
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
@@ -87,8 +80,8 @@ PAM_EXTERN int
         if (__MYDEBUG__) l_record("We have validated user: %s ", user);
 
         DIR *_homeDIR;
-        if (! (_homeDIR=opendir(*_userInfo->pw_dir) ) ) {
-          l_record("User home directory: %s not found on system.", *_userInfo->pw_dir);
+        if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
+          l_record("User home directory: %s not found on system.", _userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
@@ -100,7 +93,7 @@ PAM_EXTERN int
           l_record ("Bad Character(s) in token: %s", token );
           return (PAM_AUTH_ERR);
         }
-
+        if (__MYDEBUG__) l_record("Checked user token for bad characters.");
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
         if (! findKeyFOB(keyFOB) ) {
