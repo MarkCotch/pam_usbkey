@@ -21,6 +21,7 @@
 
 #define __PUK_VERSION__  "0.0.1"
 #define __AUTHOR__ "Mark Coccimiglio"
+#define __MYDEBUG__ (1)
 
 #define PAM_SM_AUTH
 #include <security/pam_modules.h>
@@ -55,17 +56,20 @@ PAM_EXTERN int
 
 
 
-        l_record("pam_usbkey called.");
+        if (__MYDEBUG__) l_record("pam_usbkey called. ");
         /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           l_record ("Unable to retrieve the PAM service name for :%s", service);
           return (PAM_AUTH_ERR);
         }
+        if (__MYDEBUG__) l_record("We have service %s ", service);
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           l_record ("Unable to retrieve the PAM user name for :%s", user);
           return (PAM_AUTH_ERR);
         }
+        if (__MYDEBUG__) l_record("We have user: %s ", user);
         pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
+        if (__MYDEBUG__) l_record("We have token: %s", token);
         /*{
           sprintf (_tempString, "Unable to retrieve the PAM token for :%s", token);
           l_record(_tempString);
@@ -77,9 +81,10 @@ PAM_EXTERN int
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
-          l_record ("Unable to locate user ID : %s", user);
+          l_record ("Unable to locate user ID : %s ", user);
           return (PAM_AUTHINFO_UNAVAIL);
         }
+        if (__MYDEBUG__) l_record("We have validated user: %s ", user);
 
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
@@ -88,6 +93,7 @@ PAM_EXTERN int
           return (PAM_AUTHINFO_UNAVAIL);
         }
         closedir (_homeDIR);
+        if (__MYDEBUG__) l_record("we have validated home dir: %d", _userInfo->pw_dir);
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         if ( testForBadChar(token) ) {
