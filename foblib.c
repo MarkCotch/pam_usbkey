@@ -63,9 +63,6 @@ int _stringCompare (char S1[], char S2[], int len) {
     }
   return 1;
 }
-char *sanitizeString( char _sanitizeThisString[] ){
-    /* Bad Characters need to be escaped  "   '   $  *   \     */
-}
 
 int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
@@ -80,6 +77,17 @@ int testForBadChar(char _testString[]){
         }
   }
   return ( FALSE );
+}
+
+char *sanitizeString( char _sanitizeThisString[] ){
+    /* Bad Characters need to be escaped  "   '   $  *   \     */
+    char _sSTempString[256]={0};
+    int sourcePos=0;
+    int destPos=0;
+    do {
+
+    } while ();
+    return (_sanitizeThisString);
 }
 
 char *findKeyTag(char _pubKey[]) {

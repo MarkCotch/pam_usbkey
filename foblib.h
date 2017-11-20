@@ -26,4 +26,5 @@
   int _stringCompare (char *, char *, int);
   char *findKeyTag(char *);
   int testForBadChar(const char *);
+  char *sanitizeString( char * );
 #endif
