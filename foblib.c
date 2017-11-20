@@ -67,7 +67,7 @@ char *sanitizeString( char _sanitizeThisString[] ){
     /* Bad Characters need to be escaped  "   '   $  *   \     */
 }
 
-int testForBadChar(const char _testString[]){
+int testForBadChar( char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
   char badChars[]={ 34, 39, 36, 42, 92, 0};
   int loop;
@@ -75,7 +75,7 @@ int testForBadChar(const char _testString[]){
   for (loop=0 ; _testString[loop] ; loop++){
         int iloop;
         for (iloop=0 ; badChars[iloop] ; iloop++) {
-          syslog (LOG_WARNING, "testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]);
+          /* syslog (LOG_WARNING, "testing _testString : %c : Value : %c",_testString[loop] ,  badChars[iloop]); */
           if (_testString[loop] == badChars[iloop] ) return ( TRUE );
         }
   }
