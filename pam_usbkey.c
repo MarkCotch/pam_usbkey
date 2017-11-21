@@ -34,6 +34,7 @@
 #include <sys/mount.h>
 #include <pwd.h>
 #include <dirent.h>
+#include <unistd.h>
 
 #include "foblib.h"
 
