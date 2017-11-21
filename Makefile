@@ -1,3 +1,4 @@
+include	/etc/os-release
 CC=gcc
 CFLAGS=-I. -lm
 DEPS = foblib.h
@@ -18,25 +19,25 @@ clean:
 	rm -vf *.o a.* *.so
 
 install:
-	. /etc/os-release
-	ifeq(ID,"fedora")
+	ifeq (ID_LIKE,"fedora")
 		$@ -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
 		perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/system-auth
 		perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/password-auth
 	endif
-	ifeq(ID,"debian")
+
+	ifeq(ID_LIKE,"debian")
 		$@ -v -o root -g root -m 755 pam_usbkey.so /lib/x86_64-linux-gnu/security/pam_unix.so
 		perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/common-auth
 	endif
 
 uninstall:
- 	. /etc/os-release
-	ifeq(ID_LIKE,"fedora")
+	ifeq (ID_LIKE,"fedora")
 		rm -vf /usr/lib64/security/pam_usbkey.so
 		perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/system-auth
 		perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/password-auth
 	endif
-	ifeq(ID,"debian")
+	
+	ifeq(ID_LIKE,"debian")
 		rm -vf /lib/x86_64-linux-gnu/security/pam_unix.so
 		perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/common-auth
 	endif
