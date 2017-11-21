@@ -98,7 +98,6 @@ PAM_EXTERN int
         sanitizeString(token);
         if (__MYDEBUG__) l_record("we have sanitized token: %s", token);
 
-        if (__MYDEBUG__) l_record("Checked user token for bad characters.");
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
         if (! findKeyFOB(keyFOB) ) {
