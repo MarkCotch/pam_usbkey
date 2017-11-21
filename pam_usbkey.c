@@ -129,16 +129,17 @@ PAM_EXTERN int
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
-        fgets(keyLabel, 4095, _ssh_keygenFP);
+        /* fgets(keyLabel, 4095, _ssh_keygenFP); */
+        getline(&keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
         if (! keyLabel) {
-          l_record("at line: %d Derive pubkey from private returned no data.", __LINE__);
+          l_record("Derived pubkey from private returned no data.");
           return(PAM_AUTHINFO_UNAVAIL);
         }
         if (__MYDEBUG__) l_record ("at line %d : We have: %s", __LINE__, keyLabel);
 
         if ( _stringCompare( "load failed", keyLabel, 11 ) ) {
-          l_record("at line: %d Bad Passord", __LINE__);
+          l_record("Bad Passord");
           return (PAM_AUTH_ERR);
         }
         if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
