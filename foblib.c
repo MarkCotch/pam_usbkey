@@ -95,7 +95,7 @@ char *sanitizeString(char _sanitizeThisString[] ){
     _sSTempString[destPos]=_sanitizeThisString[sourcePos];
     sourcePos++;
     destPos++;
-    } while ( _sanitizeThisString[sourcePos] );
+    } while ( _sanitizeThisString[sourcePos-1] );
     return (_sanitizeThisString);
 }
 
