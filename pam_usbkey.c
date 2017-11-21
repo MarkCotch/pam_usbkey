@@ -123,13 +123,13 @@ PAM_EXTERN int
         sprintf(cmdString, "ssh-keygen -P \"%s\" -y -f %s 2>&1", token, keyFOB );
         if (__MYDEBUG__) l_record (cmdString);
         _ssh_keygenFP = popen(cmdString, "r");
+        sleep(2);
         if (_ssh_keygenFP == NULL) {
           l_record("Failed to run command: %s", cmdString);
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
         fgets(keyLabel, 4095, _ssh_keygenFP);
-        sleep(2);
         pclose(_ssh_keygenFP);
         if (! keyLabel) {
           l_record("at line: %d Derive pubkey from private returned no data.", __LINE__);
