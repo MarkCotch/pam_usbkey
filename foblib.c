@@ -93,6 +93,8 @@ char *sanitizeString(char _sanitizeThisString[] ){
            destPos++;
          }
     _sSTempString[destPos]=_sanitizeThisString[sourcePos];
+    sourcePos++;
+    destPos++;
     } while ( _sanitizeThisString[sourcePos] );
     return (_sanitizeThisString);
 }
