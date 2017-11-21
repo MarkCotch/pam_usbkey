@@ -129,6 +129,7 @@ PAM_EXTERN int
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
         fgets(keyLabel, 4095, _ssh_keygenFP);
+        sleep(2);
         pclose(_ssh_keygenFP);
         if (! keyLabel) {
           l_record("at line: %d Derive pubkey from private returned no data.", __LINE__);
