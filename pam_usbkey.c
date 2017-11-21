@@ -117,25 +117,35 @@ PAM_EXTERN int
 
         FILE *_ssh_keygenFP;
         char cmdString[256]={0};
-        sprintf(cmdString,
+        /* sprintf(cmdString,
            "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
-           ,token, keyFOB, _userInfo->pw_dir);
-        /* sprintf(cmdString, "ssh-keygen -P %s -y -f /dev/vdb1 2>&1", token ); */
+           ,token, keyFOB, _userInfo->pw_dir); */
+        sprintf(cmdString, "ssh-keygen -P \"%s\" -y -f %s 2>&1", token, keyFOB );
         if (__MYDEBUG__) l_record (cmdString);
         _ssh_keygenFP = popen(cmdString, "r");
-        /* sleep (2); */
         if (_ssh_keygenFP == NULL) {
-          printf("Failed to run command" );
+          l_record("Failed to run command: %s", cmdString);
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
         fgets(keyLabel, 4095, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
-        if (! keyLabel) return(PAM_AUTHINFO_UNAVAIL);
+        if (! keyLabel) {
+          l_record("at line: %d Derive pubkey from private returned no data.", __LINE__)
+          return(PAM_AUTHINFO_UNAVAIL);
+        }
+        if (__MYDEBUG__) l_record ("at line %d : We have: %s", __LINE__, keyLabel);
+
+        if ( _stringCompare( "load failed", keyLabel, 11 ) ) {
+          l_record("at line: %d Bad Passord", __LINE__);
+          return (PAM_AUTH_ERR);
+        }
         if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
           l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
                     return(PAM_AUTHINFO_UNAVAIL);
         }
+
+
         l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
 
 
@@ -145,8 +155,8 @@ PAM_EXTERN int
 
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
-        return (PAM_SUCCESS);
-        /* return (PAM_AUTHINFO_UNAVAIL); */
+        /* return (PAM_SUCCESS); */
+        return (PAM_AUTHINFO_UNAVAIL); 
   }
 
 PAM_EXTERN int
