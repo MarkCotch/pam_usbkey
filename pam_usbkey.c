@@ -118,7 +118,7 @@ PAM_EXTERN int
         FILE *_ssh_keygenFP;
         char cmdString[256]={0};
         sprintf(cmdString,
-           "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys | head -1"
+           "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
            ,token, keyFOB, _userInfo->pw_dir);
         /* sprintf(cmdString, "ssh-keygen -P %s -y -f /dev/vdb1 2>&1", token ); */
         _ssh_keygenFP = popen(cmdString, "r");
