@@ -80,7 +80,7 @@ int testForBadChar(char _testString[]){
 }
 
 char *sanitizeString(char _sanitizeThisString[] ){
-    /* Bad Characters need to be escaped  "    $  *   \     */
+    /* Bad Characters need to be escaped:  "  $  \     */
     char badChars[]={34, 36, 92, 0};
     char _sSTempString[256]={0};
     int sourcePos=0;
@@ -96,6 +96,7 @@ char *sanitizeString(char _sanitizeThisString[] ){
     sourcePos++;
     destPos++;
     } while ( _sanitizeThisString[sourcePos-1] );
+    strcpy(_sanitizeThisString, _sSTempString)
     return (_sanitizeThisString);
 }
 
