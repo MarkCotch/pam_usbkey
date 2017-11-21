@@ -131,7 +131,7 @@ PAM_EXTERN int
         fgets(keyLabel, 4095, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
         if (! keyLabel) {
-          l_record("at line: %d Derive pubkey from private returned no data.", __LINE__)
+          l_record("at line: %d Derive pubkey from private returned no data.", __LINE__);
           return(PAM_AUTHINFO_UNAVAIL);
         }
         if (__MYDEBUG__) l_record ("at line %d : We have: %s", __LINE__, keyLabel);
@@ -156,7 +156,7 @@ PAM_EXTERN int
         /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
 
         /* return (PAM_SUCCESS); */
-        return (PAM_AUTHINFO_UNAVAIL); 
+        return (PAM_AUTHINFO_UNAVAIL);
   }
 
 PAM_EXTERN int
