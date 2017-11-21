@@ -111,6 +111,7 @@ PAM_EXTERN int
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
         sprintf (_tempString, "chmod 600 %s", keyFOB);
+        if (__MYDEBUG__) l_record ("at line : %d :: set FOB to correct perms: %s", __LINE__, _tempString );
         system (_tempString);
 
         char keyLabel[4096]={0};
