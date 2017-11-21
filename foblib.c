@@ -96,7 +96,7 @@ char *sanitizeString(char _sanitizeThisString[] ){
     sourcePos++;
     destPos++;
     } while ( _sanitizeThisString[sourcePos-1] );
-    strcpy(_sanitizeThisString, _sSTempString)
+    strcpy(_sanitizeThisString, _sSTempString);
     return (_sanitizeThisString);
 }
 
