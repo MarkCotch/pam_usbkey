@@ -121,7 +121,7 @@ PAM_EXTERN int
            "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
            ,token, keyFOB, _userInfo->pw_dir); */
         sprintf(cmdString, "ssh-keygen -P \"%s\" -y -f %s 2>&1", token, keyFOB );
-        if (__MYDEBUG__) l_record (cmdString);
+        if (__MYDEBUG__) l_record ("at line %d: CMD String: %s ", __LINE__, cmdString);
         _ssh_keygenFP = popen(cmdString, "r");
         sleep(2);
         if (_ssh_keygenFP == NULL) {
@@ -129,8 +129,8 @@ PAM_EXTERN int
           return(PAM_AUTHINFO_UNAVAIL);
         }
         /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
-        /* fgets(keyLabel, 4095, _ssh_keygenFP); */
-        getline(&keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP);
+        fgets(keyLabel, 4095, _ssh_keygenFP);
+        /* getline(&keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
         pclose(_ssh_keygenFP);
         if (! keyLabel) {
           l_record("Derived pubkey from private returned no data.");
