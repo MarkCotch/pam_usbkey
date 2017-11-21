@@ -79,14 +79,21 @@ int testForBadChar(char _testString[]){
   return ( FALSE );
 }
 
-char *sanitizeString( char _sanitizeThisString[] ){
-    /* Bad Characters need to be escaped  "   '   $  *   \     */
+char *sanitizeString(char _sanitizeThisString[] ){
+    /* Bad Characters need to be escaped  "    $  *   \     */
+    char badChars[]={34, 36, 92, 0};
     char _sSTempString[256]={0};
     int sourcePos=0;
     int destPos=0;
+    int loop;
     do {
-
-    } while ( 0 );
+        for (loop=0 ; badChars[loop] ; loop++ )
+         if ( _sanitizeThisString[sourcePos] == badChars [loop] ) {
+           _sSTempString[destPos]= 92;
+           destPos++;
+         }
+    _sSTempString[destPos]=_sanitizeThisString[sourcePos];
+    } while ( _sanitizeThisString[sourcePos] );
     return (_sanitizeThisString);
 }
 

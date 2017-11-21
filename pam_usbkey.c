@@ -50,7 +50,8 @@ PAM_EXTERN int
         char keyFOB[256]={0};
         const char  *service;
         const char  *user;
-        const char  *token;
+        const char  *pre_token;
+        char token[128]={0};
         int             rval;
         char _tempString[256]={0};
 
@@ -68,8 +69,8 @@ PAM_EXTERN int
           return (PAM_AUTH_ERR);
         }
         if (__MYDEBUG__) l_record("We have user: %s ", user);
-        pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&token );
-        if (__MYDEBUG__) l_record("We have token: %s", token);
+        pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token );
+        if (__MYDEBUG__) l_record("We have pre_token: %s", pre_token);
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
@@ -89,10 +90,14 @@ PAM_EXTERN int
         if (__MYDEBUG__) l_record("we have validated home dir: %s", _userInfo->pw_dir);
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
-        if ( testForBadChar(token) ) {
+/*        if ( testForBadChar(token) ) {
           l_record ("Bad Character(s) in token: %s", token );
           return (PAM_AUTH_ERR);
-        }
+        } */
+        strcpy(token, pre_token);
+        sanitizeString(token);
+        if (__MYDEBUG__) l_record("we have sanitized token: %s", token);
+
         if (__MYDEBUG__) l_record("Checked user token for bad characters.");
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
