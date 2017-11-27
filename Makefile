@@ -27,13 +27,16 @@ test%: $(OBJ)
 clean:
 	rm -vf *.o a.* *.so
 
+install_debian:
+	install -v -o root -g root -m 755 pam_usbkey.so /lib/x86_64-linux-gnu/security/
+	echo perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/common-auth
 
-install: $(conf_dest)
-		echo ID_LIKE $(ID_LIKE)
-		echo bin_dest $(bin_dest)
-		echo $@ -v -o root -g root -m 755 pam_usbkey.so $(bin_dest)
-		echo perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/$<
+install_fedora:
+	install -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
+	echo perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/' /etc/pam.d/system-auth
+	echo perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/' /etc/pam.d/password-auth
 
+install: install_$(ID_LIKE)
 
 uninstall: $(conf_dest)
 		echo rm -vf $(bin_dest)/pam_usbkey.so
