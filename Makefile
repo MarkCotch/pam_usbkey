@@ -4,12 +4,12 @@ CFLAGS=-I. -lm
 DEPS = foblib.h
 OBJ = foblib.o
 
-ifeq (ID_LIKE,"fedora")
+ifeq (ID_LIKE,fedora)
 	bin_dest=/usr/lib64/security/
 	conf_dest=system-auth password-auth
 endif
 
-ifeq (ID_LIKE,"debian")
+ifeq (ID_LIKE,debian)
 	bin_dest=/lib/x86_64-linux-gnu/security/
 	conf_dest=common-auth
 endif
@@ -29,6 +29,8 @@ clean:
 
 
 install: $(conf_dest)
+		echo ID_LIKE $(ID_LIKE)
+		echo bin_dest $(bin_dest)
 		echo $@ -v -o root -g root -m 755 pam_usbkey.so $(bin_dest)
 		echo perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/$<
 
@@ -36,9 +38,3 @@ install: $(conf_dest)
 uninstall: $(conf_dest)
 		echo rm -vf $(bin_dest)/pam_usbkey.so
 		echo perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/$<
-
-
-	ifeq(ID_LIKE,"debian")
-		rm -vf /lib/x86_64-linux-gnu/security/pam_unix.so
-		perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/common-auth
-	endif
