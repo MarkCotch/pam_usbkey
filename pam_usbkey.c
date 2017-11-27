@@ -112,7 +112,7 @@ PAM_EXTERN int
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
         sprintf (_tempString, "chmod 600 %s", keyFOB);
-        if (__MYDEBUG__) l_record ("at line %d: set FOB to correct perms: %s", __LINE__, _tempString );
+        if (__MYDEBUG__) l_record ("set FOB to correct perms: %s", _tempString );
         system (_tempString);
 
         char keyLabel[4096]={0};
@@ -123,7 +123,7 @@ PAM_EXTERN int
            "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
            ,token, keyFOB, _userInfo->pw_dir); */
         sprintf(cmdString, "ssh-keygen -P \"%s\" -y -f %s 2>&1", token, keyFOB );
-        if (__MYDEBUG__) l_record ("at line %d: CMD String: %s ", __LINE__, cmdString);
+        if (__MYDEBUG__) l_record ("CMD String: %s ", cmdString);
         _ssh_keygenFP = popen(cmdString, "r");
         sleep(2);
         if (_ssh_keygenFP == NULL) {
@@ -138,12 +138,13 @@ PAM_EXTERN int
           l_record("Derived pubkey from private returned no data.");
           return(PAM_AUTHINFO_UNAVAIL);
         }
-        if (__MYDEBUG__) l_record ("at line %d : We have: %s", __LINE__, keyLabel);
+        if (__MYDEBUG__) l_record ("We have keyLabel : %s", keyLabel);
 
         if ( _stringCompare( "load failed", keyLabel, 11 ) ) {
-          l_record("Bad Passord");
+          l_record("Bad password for user %s", user);
           return (PAM_AUTH_ERR);
         }
+
         if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
           l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
                     return(PAM_AUTHINFO_UNAVAIL);
@@ -152,7 +153,7 @@ PAM_EXTERN int
 
         l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
 
-
+        /* cat .ssh/authorized_keys | ssh-keygen -l -f /dev/stdin */
 
         /* ssh-keygen -y -f mykey.pem > mykey.pub */
         /* grep "$(ssh-keygen -P PassPhrase -y -f id_rsa.test 2>&1 )" ~/.ssh/authorized_keys */
