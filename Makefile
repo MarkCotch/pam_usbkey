@@ -4,15 +4,6 @@ CFLAGS=-I. -lm
 DEPS = foblib.h
 OBJ = foblib.o
 
-ifeq (ID_LIKE,fedora)
-	bin_dest=/usr/lib64/security/
-	conf_dest=system-auth password-auth
-endif
-
-ifeq (ID_LIKE,debian)
-	bin_dest=/lib/x86_64-linux-gnu/security/
-	conf_dest=common-auth
-endif
 
 %.o: %.c $(DEPS)
 	$(CC) -c -fPIC -o $@ $< $(CFLAGS)
