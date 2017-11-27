@@ -145,10 +145,10 @@ PAM_EXTERN int
           return (PAM_AUTH_ERR);
         }
 
-        if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
+        /*if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
           l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
                     return(PAM_AUTHINFO_UNAVAIL);
-        }
+        }*/
 
 
         l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
