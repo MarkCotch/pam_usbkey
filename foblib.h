@@ -27,4 +27,10 @@
   char *findKeyTag(char *);
   int testForBadChar(const char *);
   char *sanitizeString( char * );
+  struct sshKey {
+    char type[25]=0;
+    char key[256]=0;
+    char tag[256]=0;
+  };
+  int getKey (struct *sshKey, char[]);
 #endif

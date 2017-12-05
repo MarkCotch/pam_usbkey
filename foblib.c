@@ -138,3 +138,24 @@ char *findKeyFOB(char *KeyDevice ) {
   closedir(_devFP);
   return (NULL);
 }
+
+int getKey (struct *sshKey KEY, char FOB[] ) {
+  int loop=0;
+  int lenFOB=strlen(FOB);
+  if (! lenFOB) return FALSE; /* if FOB is NULL length then return FALSE */
+  if (FOB[0] == 32) return FALSE; /* if FOB starts with <SPACE> return FALSE*/
+  do {
+    KEY->type[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
+    loop++;
+  } while (FOB[loop-1] != 32 && loop < lenFOB);
+  if (loop >= lenFOB) return FALSE;
+  do {
+    KEY->key[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
+    loop++;
+  } while (FOB[loop-1] != 32 && loop < lenFOB);
+  do {
+    KEY->tag[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
+    loop++;
+  } while (FOB[loop-1] != 32 && loop < lenFOB);
+  return KEY;
+}

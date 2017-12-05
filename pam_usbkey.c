@@ -145,6 +145,13 @@ PAM_EXTERN int
           return (PAM_AUTH_ERR);
         }
 
+        struct sshKey fobKey;
+        if (! getKey(&fobKey, keyLabel)) {
+          if (__MYDEBUG__) l_record("bad keyLabel: %s", keyLabel);
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+
+
         /*if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
           l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
                     return(PAM_AUTHINFO_UNAVAIL);
