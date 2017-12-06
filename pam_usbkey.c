@@ -145,17 +145,19 @@ PAM_EXTERN int
           return (PAM_AUTH_ERR);
         }
 
+        ("ssh-keygen -lf /dev/stdin");
+
         struct sshKey fobKey;
         if (! getKey(&fobKey, keyLabel)) {
-          if (__MYDEBUG__) l_record("bad keyLabel: %s", keyLabel);
+          l_record("bad keyLabel: %s", keyLabel);
           return (PAM_AUTHINFO_UNAVAIL);
         }
+        if (__MYDEBUG__) l_record("We have sshKey Type: %s", fobKey.type);
+        if (__MYDEBUG__) l_record("We have sshKey Key: %s", fobKey.key);
+        if (__MYDEBUG__) l_record("We have sshKey Tag: %s", fobKey.tag);
 
 
-        /*if (! _stringCompare( "ssh-rsa", keyLabel, 4 ) ) {
-          l_record ("Credentials NOT Approved for %s:%s", user, keyLabel);
-                    return(PAM_AUTHINFO_UNAVAIL);
-        }*/
+        struct sshKey userKey;
 
 
         l_record ("Credentials Approved for %s:%s", user, findKeyTag(keyLabel) );
