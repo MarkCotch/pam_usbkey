@@ -26,7 +26,7 @@
   #include <pwd.h>
   #include <dirent.h>
   #include <syslog.h>
-
+  #include "foblib.h"
   #ifndef FALSE
     #define FALSE (0)
   #endif
@@ -139,7 +139,7 @@ char *findKeyFOB(char *KeyDevice ) {
   return (NULL);
 }
 
-int getKey (struct *sshKey KEY, char FOB[] ) {
+int getKey (struct sshKey *KEY, char FOB[] ) {
   int loop=0;
   int lenFOB=strlen(FOB);
   if (! lenFOB) return FALSE; /* if FOB is NULL length then return FALSE */
