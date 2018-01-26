@@ -18,24 +18,27 @@
 
 
 */
-#ifndef FOBLIB
-  #define FOBLIB
+#ifndef FOBLIBC
+  #define FOBLIBC
   #include <stdio.h>
   #include <string.h>
   #include <time.h>
   #include <pwd.h>
   #include <dirent.h>
   #include <syslog.h>
-  #include "foblib.h"
+  /* #include "foblib.h" */
   #ifndef FALSE
     #define FALSE (0)
   #endif
   #ifndef TRUE
     #define TRUE (!FALSE)
   #endif
-
-
-  #define __HASH__ sha1sum
+  typedef struct sshKey sshKey;
+  struct sshKey {
+     char type[25];
+     char key[256];
+     char tag[256];
+  };
 
 #endif
 
@@ -139,23 +142,30 @@ char *findKeyFOB(char *KeyDevice ) {
   return (NULL);
 }
 
-int getKey (struct sshKey *KEY, char FOB[] ) {
-  int loop=0;
+sshKey *getKey ( sshKey *KEY, char FOB[] ) {
+  int sourcePOS=0;
+  int destPOS=0;
   int lenFOB=strlen(FOB);
   if (! lenFOB) return FALSE; /* if FOB is NULL length then return FALSE */
+  if (! FOB[0]) return FALSE;  /* If FOB[0]=0 return FALSE*/
   if (FOB[0] == 32) return FALSE; /* if FOB starts with <SPACE> return FALSE*/
   do {
-    KEY->type[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
-    loop++;
-  } while (FOB[loop-1] != 32 && loop < lenFOB);
-  if (loop >= lenFOB) return FALSE;
+    KEY->type[destPOS] = (FOB[sourcePOS] == 32) ? 0 :  FOB[sourcePOS] ;
+    destPOS++;
+    sourcePOS++;
+  } while ( (FOB[sourcePOS-1] != 32) && (destPOS < lenFOB) );
+  if (sourcePOS >= lenFOB) return FALSE;
+  destPOS=0;
   do {
-    KEY->key[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
-    loop++;
-  } while (FOB[loop-1] != 32 && loop < lenFOB);
+    KEY->key[destPOS] = (FOB[sourcePOS] == 32) ? 0 :  FOB[sourcePOS] ;
+    destPOS++;
+    sourcePOS++;
+  } while (FOB[sourcePOS-1] != 32 && sourcePOS < lenFOB);
+  destPOS=0;
   do {
-    KEY->tag[loop] = (FOB[loop] == 32) ? 0 :  FOB[loop] ;
-    loop++;
-  } while (FOB[loop-1] != 32 && loop < lenFOB);
+    KEY->tag[destPOS] = (FOB[sourcePOS] == 32) ? 0 :  FOB[sourcePOS] ;
+    destPOS++;
+    sourcePOS++;
+  } while (FOB[sourcePOS-1] != 32 && sourcePOS < lenFOB);
   return KEY;
 }

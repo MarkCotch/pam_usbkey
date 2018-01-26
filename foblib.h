@@ -18,19 +18,20 @@
 
 
 */
-#ifndef FOBLIB
-  #define FOBLIB
-  void l_record (char *, ...);
-  char *findKeyFOB (char *);
-  char *genRandomTempDir(char *);
-  int _stringCompare (char *, char *, int);
-  char *findKeyTag(char *);
-  int testForBadChar(const char *);
-  char *sanitizeString( char * );
+#ifndef FOBLIBH
+  #define FOBLIBH
+  void    l_record (char *, ...);
+  char   *findKeyFOB (char *);
+  char   *genRandomTempDir(char *);
+  int     _stringCompare (char *, char *, int);
+  char   *findKeyTag(char *);
+  int     testForBadChar(const char *);
+  char   *sanitizeString( char * );
+  typedef struct sshKey sshKey;
   struct sshKey {
-    char type[25]=0;
-    char key[256]=0;
-    char tag[256]=0;
+     char type[25];
+     char key[256];
+     char tag[256];
   };
-  int getKey (struct *sshKey, char[]);
+  sshKey *getKey ( sshKey *, char[] );
 #endif

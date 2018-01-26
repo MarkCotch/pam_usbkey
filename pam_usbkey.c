@@ -147,7 +147,7 @@ PAM_EXTERN int
 
         ("ssh-keygen -lf /dev/stdin");
 
-        struct sshKey fobKey;
+        sshKey fobKey;
         if (! getKey(&fobKey, keyLabel)) {
           l_record("bad keyLabel: %s", keyLabel);
           return (PAM_AUTHINFO_UNAVAIL);
