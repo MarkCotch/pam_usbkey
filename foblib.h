@@ -34,4 +34,10 @@
      char tag[256];
   };
   sshKey *getKey ( sshKey *, char[] );
+
+  /* I might do something with this later.
+    char *authorized_keys[] = {
+      "/root/.ssh/authorized_keys"
+  }; */
+
 #endif
