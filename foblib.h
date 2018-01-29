@@ -33,7 +33,6 @@
      char key[256];
      char tag[256];
   };
-  sshKey *getKey ( sshKey *, char[] );
 
   /* I might do something with this later.
     char *authorized_keys[] = {

@@ -35,6 +35,7 @@
 #include <pwd.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "foblib.h"
 
@@ -107,6 +108,7 @@ PAM_EXTERN int
           l_record("No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL");
           return (PAM_AUTHINFO_UNAVAIL);
         }
+        if (__MYDEBUG__) sleep (5);
         if (__MYDEBUG__) l_record ("Found Authentication FOB %s ", keyFOB );
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
@@ -115,10 +117,11 @@ PAM_EXTERN int
         if (__MYDEBUG__) l_record ("set FOB to correct perms: %s", _tempString );
         system (_tempString);
 
-        char keyLabel[1024]={0};
+        char keyLabel[512]={0};
+        char *privKey;
 
         FILE *_ssh_keygenFP;
-        char cmdString[256]={0};
+        char cmdString[1024]={0};
         /* sprintf(cmdString,
            "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
            ,token, keyFOB, _userInfo->pw_dir); */
@@ -131,15 +134,14 @@ PAM_EXTERN int
           pclose(_ssh_keygenFP);
           return(PAM_AUTHINFO_UNAVAIL);
         }
-        /* fgets(keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
-        fgets(keyLabel, 1024, _ssh_keygenFP);
-        /* getline(&keyLabel, sizeof(keyLabel)-1, _ssh_keygenFP); */
+        fgets(keyLabel, 512, _ssh_keygenFP);
         pclose(_ssh_keygenFP);
+
         if (! keyLabel) {
           l_record("Derived pubkey from private returned no data.");
           return(PAM_AUTHINFO_UNAVAIL);
         }
-        if (__MYDEBUG__) l_record ("We have keyLabel : %s", keyLabel);
+        if (__MYDEBUG__) l_record ("We have keyLabel : '%s' ", keyLabel);
 
         if ( _stringCompare( "load failed", keyLabel, 11 ) ) {
           l_record("Bad password for user %s", user);
@@ -148,20 +150,14 @@ PAM_EXTERN int
 
         /* cat .ssh/authorized_keys | ssh-keygen -lf /dev/stdin
            returns Key Fingerprints.  */
-
-        sshKey fobKey;
-        if (! getKey(&fobKey, keyLabel)) {
-          l_record("bad keyLabel: %s", keyLabel);
-          return (PAM_AUTHINFO_UNAVAIL);
-        }
-        if (__MYDEBUG__) l_record("We have sshKey Type: %s", fobKey.type);
-        if (__MYDEBUG__) l_record("We have sshKey Key:  %s", fobKey.key);
-        if (__MYDEBUG__) l_record("We have sshKey Tag:  %s", fobKey.tag);
+        /* extract the actual private key*/
+        privKey=strtok(keyLabel, " \n");
+        privKey=strtok(NULL , " \n");
+        if (__MYDEBUG__) l_record ("privKey is: '%s' ", privKey);
 
         /* Next we need to roll through ~/.ssh/authorized_keys and/or
            /root/.ssh/authorized_keys to see if our keys match. */
 
-        sshKey userKey;
         FILE *authFP;
         char pubKeyToTest[512]={0};
 
@@ -173,25 +169,47 @@ PAM_EXTERN int
         }
 
         while ( fgets ( pubKeyToTest, 512, authFP) !=NULL ) {
-          if (__MYDEBUG__) l_record ("Trying Key: %s", pubKeyToTest);
-          if ( ! strlen(pubKeyToTest) ) { continue; }
-          getKey(&userKey, pubKeyToTest);
-          if ( strlen(fobKey.key) != strlen(userKey.key) ) { continue; }
-          if (_stringCompare(fobKey.key, userKey.key, strlen(fobKey.key))) {
+          if (__MYDEBUG__) l_record ("Trying Key: '%s' ", pubKeyToTest);
+          if ( ! strlen(pubKeyToTest) ) {
+            l_record ("pubKeyToTest length NULL...continue.");
+            continue;
+          }
+          if(strstr(pubKeyToTest, privKey) != NULL) {
+            /* Key matches.  Record key signature and return PAM_SUCCESS*/
+            fclose (authFP);
+            if (__MYDEBUG__) l_record ("pam_usbkey: success.  Logging key signature(not implemented yet.)");
+            /*
+            FILE *_tGetSig;
+            char sigVal[512]={0};
+            char getSig[1024]={0};
+            strtok(pubKeyToTest, "\n");
+            sprintf(getSig, "echo '%s' | /usr/bin/env ssh-keygen -lf /dev/stdin", pubKeyToTest);
+            if (__MYDEBUG__) l_record ("Running: '%s' ", getSig);
+            _tGetSig=popen(getSig, "r");
+            sleep (3);
+            if ( _tGetSig == NULL ) {l_record ("Command Failed."); fclose (_tGetSig); return (PAM_SUCCESS);}
+            if (__MYDEBUG__) { if (_tGetSig) l_record ("Command run successfull."); }
+            if ( fgets(sigVal, 511, _tGetSig) == NULL) { l_record ("Fetch from Command Failed."); fclose (_tGetSig); return (PAM_SUCCESS); }
+            l_record ("Key authorized for user: %s Signature: %s", user, sigVal );
+            fclose (_tGetSig);
+            */
+
+            return (PAM_SUCCESS);
+
+          }
+
+
             /*If this is the case then our Keys Match.  Log it and
             return PAM_SUCCESS*/
-
-
-            l_record ("pam_usbkey: Credentials for %s accepted. Signature %s", user );
-            fclose (authFP);
-            return (PAM_AUTHINFO_UNAVAIL);
-            /* return (PAM_SUCCESS); */
-          }
         }
 
+        l_record ("pam_usbkey: Credentials for %s not found", user );
         fclose (authFP);
-        if (__MYDEBUG__) l_record ("pam_usbkey Credentials not found for %s:%s", user, findKeyTag(keyLabel) );
         return (PAM_AUTHINFO_UNAVAIL);
+
+
+
+
 
         /* cat .ssh/authorized_keys | ssh-keygen -l -f /dev/stdin */
 
