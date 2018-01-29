@@ -1,14 +1,6 @@
+Installation should be rather simple.  From package root type:
 
-Ubuntu:
-perl -pe 's/(^auth.*pam_unix.so.*$)/auth\t[success=1 default=ignore]\tpam_usbkey.so try_first_pass nullok\n$1/' common-auth
+make
+sudo make install
 
-/lib/x86_64-linux-gnu/security/pam_unix.so
-
-
-
-EL:
-perl -pe 's/(^auth.*pam_unix.so.*$)/auth\tsufficient\ttpam_usbkey.so nullok try_first_pass\n$1/'  /etc/pam.d/system-auth
-
-/usr/lib64/security/pam_unix.so
-
-perl -pe 's/(^auth.*pam_usbkey.*\n$//' /etc/pam.d/system-auth
+This has been tested with Ubuntu 16.04LTS and RHEL7.

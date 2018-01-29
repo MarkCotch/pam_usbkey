@@ -126,7 +126,10 @@ char *findKeyFOB(char *KeyDevice ) {
     /* Test if Media is present */
     /* Read first 32 bytes from block dev looking for SSH Key Signature.*/
     sprintf (__temp_path, "/dev/%s", _dev_Device->d_name );
-    FILE *_FH=fopen( __temp_path, "r");
+    /* FILE *_FH=fopen( __temp_path, "r"); */
+      char _tCmd[256]={0};
+      sprintf (_tCmd, "dd if=%s bs=31 count=1 status=none", __temp_path);
+      FILE *_FH=popen (_tCmd, "r");
     if ( ! _FH) { continue; }
     fread(_buff, 1, 31, _FH);
     fclose(_FH);
