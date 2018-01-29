@@ -124,8 +124,10 @@ char *findKeyFOB(char *KeyDevice ) {
     /* Only check "Block" Devices*/
     if (_dev_Device->d_type != DT_BLK ) { continue; }
     /* Test if Media is present */
-    /* Read first 32 bytes from block dev looking for SSH Key Signature.*/
+    /* Read first 31 bytes from block dev looking for SSH Key Signature.*/
     sprintf (__temp_path, "/dev/%s", _dev_Device->d_name );
+    /* We use dd instead of directly opening the block device to get
+       around selinux restrictions. */
     /* FILE *_FH=fopen( __temp_path, "r"); */
       char _tCmd[256]={0};
       sprintf (_tCmd, "dd if=%s bs=31 count=1 status=none", __temp_path);
