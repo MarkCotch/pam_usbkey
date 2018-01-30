@@ -19,7 +19,7 @@
 
 */
 
-#define __PUK_VERSION__  "0.0.1"
+#define __PUK_VERSION__  "0.0.2"
 #define __AUTHOR__ "Mark Coccimiglio"
 #define __MYDEBUG__ (0)
 
@@ -57,10 +57,7 @@ PAM_EXTERN int
         int             rval;
         char _tempString[256]={0};
 
-
-
         if (__MYDEBUG__) l_record("DEBUG:pam_usbkey called. ");
-        /* rval = pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service);*/
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           l_record ("Unable to retrieve the PAM service name for :%s", service);
           return (PAM_AUTH_ERR);
@@ -216,7 +213,7 @@ PAM_EXTERN int
             strtok(_sVal, "\n");
 
             /* l_record ("Key authorized for user: '%s' ", user); */
-            l_record ("Key authorized for Signature: '%s' ", _sVal );
+            l_record ("Key authorized. Fingerprint: '%s' ", _sVal );
             pclose (_tGetSigFH);
 
             if (__MYDEBUG__) l_record ("DEBUG: Removing temp file %s", _tmpfile);
@@ -225,28 +222,11 @@ PAM_EXTERN int
             return (PAM_SUCCESS);
 
           }
-
-
-            /*If this is the case then our Keys Match.  Log it and
-            return PAM_SUCCESS*/
         }
 
         l_record ("pam_usbkey: Credentials for %s not found", user );
         fclose (authFP);
         return (PAM_AUTHINFO_UNAVAIL);
-
-
-
-
-
-        /* cat .ssh/authorized_keys | ssh-keygen -l -f /dev/stdin */
-
-        /* ssh-keygen -y -f mykey.pem > mykey.pub */
-        /* grep "$(ssh-keygen -P PassPhrase -y -f id_rsa.test 2>&1 )" ~/.ssh/authorized_keys */
-
-        /* Compare Private key(s) against user's public key(s) in ~/.ssh/authorized_keys */
-
-        /* return (PAM_SUCCESS); */
 
   }
 
