@@ -41,7 +41,7 @@
 
 #define __APP__ pam_usbkey
 #define USBKEY_CONF /etc/usbkey.conf
-#define __DEBUG__ (1)
+
 
 
 PAM_EXTERN int
@@ -174,25 +174,53 @@ PAM_EXTERN int
             l_record ("pubKeyToTest length NULL...continue.");
             continue;
           }
+          strtok(pubKeyToTest, "\n");
           if(strstr(pubKeyToTest, privKey) != NULL) {
             /* Key matches.  Record key signature and return PAM_SUCCESS*/
             fclose (authFP);
-            l_record ("pam_usbkey: success for user '%s'.  Logging key signature(not implemented yet.)", user);
-            /*
-            FILE *_tGetSig;
-            char sigVal[512]={0};
-            char getSig[1024]={0};
-            strtok(pubKeyToTest, "\n");
-            sprintf(getSig, "echo '%s' | /usr/bin/env ssh-keygen -lf /dev/stdin", pubKeyToTest);
-            if (__MYDEBUG__) l_record ("DEBUG:Running: '%s' ", getSig);
-            _tGetSig=popen(getSig, "r");
-            sleep (3);
-            if ( _tGetSig == NULL ) {l_record ("Command Failed."); fclose (_tGetSig); return (PAM_SUCCESS);}
-            if (__MYDEBUG__) { if (_tGetSig) l_record ("DEBUG:Command run successfull."); }
-            if ( fgets(sigVal, 511, _tGetSig) == NULL) { l_record ("Fetch from Command Failed."); fclose (_tGetSig); return (PAM_SUCCESS); }
-            l_record ("Key authorized for user: %s Signature: %s", user, sigVal );
-            fclose (_tGetSig);
-            */
+            l_record ("pam_usbkey: success for user '%s' ", user);
+
+            FILE *_tempPubKeyFH;
+            char *_tmpTimeString;
+            char _tmpfile[256]={0};
+            int rval;
+
+            srand(time(NULL));
+            rval=rand();
+            time_t _now=time(NULL);
+            sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", _now, rval);
+
+            if (__MYDEBUG__) l_record ("DEBUG:Creating temp file '%s'", _tmpfile);
+            if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
+              l_record ("Unable to open file '%s' for write", _tempPubKeyFH);
+              fclose (_tempPubKeyFH);
+              return (PAM_AUTHINFO_UNAVAIL);
+            }
+
+            fputs (pubKeyToTest, _tempPubKeyFH);
+            fclose (_tempPubKeyFH);
+
+            FILE *_tGetSigFH;
+            char _sVal[512]={0};
+            char getSigCmd[1024]={0};
+            /* strtok(pubKeyToTest, "\n"); */
+            sprintf(getSigCmd, "/usr/bin/ssh-keygen -lf %s " , _tmpfile);
+            if (__MYDEBUG__) l_record ("DEBUG:Running: '%s' ", getSigCmd);
+
+            _tGetSigFH=popen(getSigCmd, "r");
+            /* if (__MYDEBUG__) sleep (1); */
+            if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint."); pclose (_tGetSigFH); return (PAM_AUTHINFO_UNAVAIL); }
+            if (__MYDEBUG__) { if (_tGetSigFH) l_record ("DEBUG:Command run successfull."); }
+
+            fgets( _sVal, 512, _tGetSigFH );
+            strtok(_sVal, "\n");
+
+            /* l_record ("Key authorized for user: '%s' ", user); */
+            l_record ("Key authorized for Signature: '%s' ", _sVal );
+            pclose (_tGetSigFH);
+
+            if (__MYDEBUG__) l_record ("DEBUG: Removing temp file %s", _tmpfile);
+            if (remove (_tmpfile)) l_record ("Removing temp file %s FAILED.", _tmpfile);
 
             return (PAM_SUCCESS);
 

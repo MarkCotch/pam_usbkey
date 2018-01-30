@@ -134,7 +134,7 @@ char *findKeyFOB(char *KeyDevice ) {
       FILE *_FH=popen (_tCmd, "r");
     if ( ! _FH) { continue; }
     fread(_buff, 1, 31, _FH);
-    fclose(_FH);
+    pclose(_FH);
     int loop;
     if (! _stringCompare( _buff, _keySig, 32) )
       continue;
