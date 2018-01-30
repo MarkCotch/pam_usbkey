@@ -2,7 +2,7 @@
 pam_usbkey Copyright (c) 2017 Mark Coccimiglio
 mcoccimiglio@rice.edu
 
-NOTE: This package currently works but is still considered ALPHA.
+NOTE: This package currently works but is still considered BETA.
 
 The design of the pam module is to utilize SSH Keys for local login
 authentication.  The basic premise is to install pass-phrase protected
