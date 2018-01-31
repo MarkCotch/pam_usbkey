@@ -46,28 +46,8 @@ void l_record (char* _message, void **printParam) {
   openlog("pam_usbkey", LOG_PID, LOG_AUTHPRIV);
   syslog(LOG_NOTICE, _message, printParam);
   closelog();
-  /*
-  char _tmpString[256]={0};
-  char *_timeString;
-  time_t _now=time(NULL);
-  _timeString=ctime(&_now);
-  strtok(_timeString, "\n");
-  strtok(_message, "\n");
-  FILE *_FH=fopen("/var/log/pam_sshkey.log", "a");
-  fprintf (_FH, "pam_usbkey: %s : %s\n", _now, _message);
-  fclose (_FH); */
-}
 
-/*
-int _stringCompare (char S1[], char S2[], int len) {
-  int loop;
-  for (loop=0 ; loop<len ; loop++) {
-      if ( S1[loop] != S2[loop] )
-       return 0;
-    }
-  return 1;
 }
-*/
 
 int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
@@ -103,15 +83,6 @@ char *sanitizeString(char _sanitizeThisString[] ){
     } while ( _sanitizeThisString[sourcePos-1] );
     strcpy(_sanitizeThisString, _sSTempString);
     return (_sanitizeThisString);
-}
-
-char *findKeyTag(char _pubKey[]) {
-  char *retval;
-  int loop=strlen(_pubKey)-1;
-  for ( ; loop ; loop--) {
-    if (_pubKey[loop]=' ') return (&_pubKey[loop+1]);
-  }
-  return (NULL);
 }
 
 char *findKeyFOB(char *KeyDevice ) {

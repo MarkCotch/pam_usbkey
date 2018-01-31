@@ -23,8 +23,6 @@
   void    l_record (char *, ...);
   char   *findKeyFOB (char *);
   char   *genRandomTempDir(char *);
-  int     _stringCompare (char *, char *, int);
-  char   *findKeyTag(char *);
   int     testForBadChar(const char *);
   char   *sanitizeString( char * );
   typedef struct sshKey sshKey;
