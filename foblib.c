@@ -118,7 +118,7 @@ char *findKeyFOB(char *KeyDevice ) {
   struct dirent *_dev_Device;
   DIR *_devFP=opendir ("/dev");
   char _buff[100] = { 0 };
-  char _keySig[]="-----BEGIN RSA PRIVATE KEY-----";
+  char _keySig[]="PRIVATE KEY";
 
   DEVICELOOP: while ( _dev_Device=readdir(_devFP ) ) {
     /* Only check "Block" Devices*/
@@ -133,10 +133,10 @@ char *findKeyFOB(char *KeyDevice ) {
       sprintf (_tCmd, "dd if=%s bs=31 count=1 status=none", __temp_path);
       FILE *_FH=popen (_tCmd, "r");
     if ( ! _FH) { continue; }
-    fread(_buff, 1, 31, _FH);
+    fread(_buff, 1, 64, _FH);
     pclose(_FH);
     int loop;
-    if (! _stringCompare( _buff, _keySig, 32) )
+    if (! strstr( _buff, _keySig) )
       continue;
     strcpy(KeyDevice, __temp_path);
     closedir(_devFP);
