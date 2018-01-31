@@ -138,7 +138,7 @@ PAM_EXTERN int
         }
         if (__DEBUG__) l_record ("DEBUG:We have keyLabel : '%s' ", keyLabel);
 
-        if ( _stringCompare( "load failed", keyLabel, 11 ) ) {
+        if ( strstr( keyLabel, "load failed" ) ) {
           l_record("Bad password for user %s", user);
           return (PAM_AUTH_ERR);
         }

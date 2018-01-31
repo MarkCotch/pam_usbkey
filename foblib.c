@@ -58,6 +58,7 @@ void l_record (char* _message, void **printParam) {
   fclose (_FH); */
 }
 
+/*
 int _stringCompare (char S1[], char S2[], int len) {
   int loop;
   for (loop=0 ; loop<len ; loop++) {
@@ -66,6 +67,7 @@ int _stringCompare (char S1[], char S2[], int len) {
     }
   return 1;
 }
+*/
 
 int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */
@@ -123,7 +125,9 @@ char *findKeyFOB(char *KeyDevice ) {
   DEVICELOOP: while ( _dev_Device=readdir(_devFP ) ) {
     /* Only check "Block" Devices*/
     if (_dev_Device->d_type != DT_BLK ) { continue; }
+    if (strstr(_dev_Device->d_name, "sr0")) { continue; }
     /* Test if Media is present */
+    FILE *_devTmpFH=
     /* Read first 31 bytes from block dev looking for SSH Key Signature.*/
     sprintf (__temp_path, "/dev/%s", _dev_Device->d_name );
     /* We use dd instead of directly opening the block device to get
