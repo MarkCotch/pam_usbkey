@@ -90,16 +90,17 @@ PAM_EXTERN int
         closedir (_homeDIR);
         if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
 
+        /* Zero length and NULL tokens/passwords are not accepted. */
         if (! pre_token) {
-          l_record("Token is NULL.");
+          l_record("Token is NULL. Not accepted.");
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+        if (! strlen(token)) {
+          l_record("Zero Length Token. Not Accepted.");
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
         if (__DEBUG__) l_record("pre_token copied to token");
-        if (! strlen(token)) {
-          l_record("Token is NULL length.");
-          return (PAM_MAXTRIES);
-        }
         if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         sanitizeString(token);
