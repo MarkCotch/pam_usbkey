@@ -83,21 +83,20 @@ PAM_EXTERN int
 
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
-          l_record("User home directory: %s not found on system.", _userInfo->pw_dir);
+          l_record("User home directory: '%s' not found on system.", _userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
         closedir (_homeDIR);
-        if (__DEBUG__) l_record("DEBUG:we have validated home dir: %s", _userInfo->pw_dir);
+        if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
 
-        if (! strlen(pre_token)) {
-          l_record("DEBUG:token is NULL length.");
+        strcpy(token, pre_token);
+        if (! strlen(token)) {
+          l_record("Token is NULL length.");
           return (PAM_MAXTRIES);
         }
         if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
-
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
-        strcpy(token, pre_token);
         sanitizeString(token);
         if (__DEBUG__) l_record("DEBUG:we have sanitized token: %s", token);
 
