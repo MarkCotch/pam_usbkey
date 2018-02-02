@@ -22,7 +22,7 @@
 #define __PUK_VERSION__  "0.0.2"
 #define __AUTHOR__ "Mark Coccimiglio"
 #ifndef __DEBUG__
-  #define __DEBUG__ (0)
+  #define __DEBUG__ (1)
 #endif
 
 #define PAM_SM_AUTH
@@ -89,6 +89,12 @@ PAM_EXTERN int
         }
         closedir (_homeDIR);
         if (__DEBUG__) l_record("DEBUG:we have validated home dir: %s", _userInfo->pw_dir);
+
+        if (! strlen(pre_token)) {
+          l_record("DEBUG:token is NULL length.");
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+        if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
 
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         strcpy(token, pre_token);
