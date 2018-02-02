@@ -148,10 +148,10 @@ PAM_EXTERN int
         if (! keyLabel) {
           l_record("Derived pubkey from private returned no data.");
           return(PAM_AUTHINFO_UNAVAIL);
-        }
+        }i
         if (__DEBUG__) l_record ("DEBUG:We have keyLabel : '%s' ", keyLabel);
 
-        if ( strstr( keyLabel, "load failed" ) ) {
+        if ( strstr( keyLabel, "load failed" ) || strstr( keyLabel, "incorrect passphrase" ) ) {
           l_record("Bad password for user %s", user);
           return (PAM_AUTH_ERR);
         }
