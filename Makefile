@@ -21,14 +21,14 @@ clean:
 
 install_"debian":
 	install -v -o root -g root -m 755 pam_usbkey.so /lib/x86_64-linux-gnu/security/
-	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/'  /etc/pam.d/common-auth
+	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/'  /etc/pam.d/common-auth
 
 install_debian: install_"debian"
 
 install_"fedora":
 	install -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
-	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/' /etc/pam.d/system-auth
-	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so nullok try_first_pass/' /etc/pam.d/password-auth
+	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/system-auth
+	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/password-auth
 
 install_fedora: install_"fedora"
 
