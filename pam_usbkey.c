@@ -246,7 +246,6 @@ PAM_EXTERN int
    (pam_handle_t *pamh,int flags,int argc, const char **argv)
     {
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
-        /* return (PAM_SUCCESS); */
-        return (PAM_CRED_UNAVAIL);
+        return (PAM_SUCCESS);
 
     }
