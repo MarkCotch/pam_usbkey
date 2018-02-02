@@ -90,6 +90,7 @@ PAM_EXTERN int
         closedir (_homeDIR);
         if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
 
+        if (__DEBUG__) l_record("copying pre_token to token");
         strcpy(token, pre_token);
         if (__DEBUG__) l_record("pre_token copied to token");
         if (! strlen(token)) {
