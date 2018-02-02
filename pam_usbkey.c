@@ -70,14 +70,20 @@ PAM_EXTERN int
           return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
-        pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token );
+        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
+          l_record("pre-Token is NULL. Not accepted.");
+          return (PAM_USER_UNKNOWN);
+        }
+
+
+
         if (__DEBUG__) l_record("DEBUG:We have pre_token: %s", pre_token);
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
           l_record ("Unable to locate user ID : %s ", user);
-          return (PAM_AUTHINFO_UNAVAIL);
+          return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have validated user: %s ", user);
 
@@ -91,12 +97,8 @@ PAM_EXTERN int
         if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
 
         /* Zero length and NULL tokens/passwords are not accepted. */
-        if (! pre_token) {
-          l_record("Token is NULL. Not accepted.");
-          return (PAM_AUTHINFO_UNAVAIL);
-        }
         if (! strlen(pre_token)) {
-          l_record("Zero Length Token. Not Accepted. '%d'", strlen(pre_token));
+          l_record("Zero Length pre-Token. Not Accepted. '%d'", strlen(pre_token));
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
