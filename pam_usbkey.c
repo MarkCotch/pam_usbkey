@@ -72,7 +72,7 @@ PAM_EXTERN int
         if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
         if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
           l_record("pre-Token is NULL. Not accepted.");
-          return (PAM_AUTH_ERR);
+          return (PAM_CRED_INSUFFICIENT);
         }
         if (__DEBUG__) l_record("DEBUG:We have pre_token: %s", pre_token);
 
@@ -243,5 +243,7 @@ PAM_EXTERN int
    (pam_handle_t *pamh,int flags,int argc, const char **argv)
     {
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
-        return (PAM_SUCCESS);
+        /* return (PAM_SUCCESS); */
+        return (PAM_CRED_UNAVAIL);
+
     }
