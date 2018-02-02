@@ -67,7 +67,7 @@ PAM_EXTERN int
         if (__DEBUG__) l_record("DEBUG:We have service %s ", service);
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           l_record ("Unable to retrieve the PAM user name for :%s", user);
-          return (PAM_AUTH_ERR);
+          return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
         pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token );
@@ -92,7 +92,7 @@ PAM_EXTERN int
 
         if (! strlen(pre_token)) {
           l_record("DEBUG:token is NULL length.");
-          return (PAM_AUTHINFO_UNAVAIL);
+          return (PAM_MAXTRIES);
         }
         if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
 
