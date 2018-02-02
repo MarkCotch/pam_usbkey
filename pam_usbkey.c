@@ -95,8 +95,8 @@ PAM_EXTERN int
           l_record("Token is NULL. Not accepted.");
           return (PAM_AUTHINFO_UNAVAIL);
         }
-        if (! strlen(token)) {
-          l_record("Zero Length Token. Not Accepted.");
+        if (! strlen(pre_token)) {
+          l_record("Zero Length Token. Not Accepted. '%d'", strlen(pre_token));
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
