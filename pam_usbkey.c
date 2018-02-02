@@ -60,17 +60,20 @@ PAM_EXTERN int
         char _tempString[256]={0};
 
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
+
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           l_record ("Unable to retrieve the PAM service name for :%s", service);
           return (PAM_AUTH_ERR);
         }
         if (__DEBUG__) l_record("DEBUG:We have service %s ", service);
+
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           l_record ("Unable to retrieve the PAM user name for :%s", user);
           return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
-        if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
+
+        if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
           l_record("pre-Token is NULL. Not accepted.");
           return (PAM_CRED_INSUFFICIENT);
         }
