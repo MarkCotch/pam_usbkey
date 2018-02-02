@@ -72,11 +72,8 @@ PAM_EXTERN int
         if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
         if (pam_get_item( pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
           l_record("pre-Token is NULL. Not accepted.");
-          return (PAM_USER_UNKNOWN);
+          return (PAM_AUTH_ERR);
         }
-
-
-
         if (__DEBUG__) l_record("DEBUG:We have pre_token: %s", pre_token);
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
