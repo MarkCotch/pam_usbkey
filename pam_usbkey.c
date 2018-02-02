@@ -59,7 +59,7 @@ PAM_EXTERN int
         int             rval;
         char _tempString[256]={0};
 
-        if (__DEBUG__) l_record("DEBUG:pam_usbkey called. ");
+        if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           l_record ("Unable to retrieve the PAM service name for :%s", service);
           return (PAM_AUTH_ERR);
@@ -91,6 +91,7 @@ PAM_EXTERN int
         if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
 
         strcpy(token, pre_token);
+        if (__DEBUG__) l_record("pre_token copied to token");
         if (! strlen(token)) {
           l_record("Token is NULL length.");
           return (PAM_MAXTRIES);
