@@ -92,7 +92,7 @@ PAM_EXTERN int
 
         if (! pre_token) {
           l_record("Token is NULL.");
-          return (PAM_MAXTRIES);
+          return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
         if (__DEBUG__) l_record("pre_token copied to token");
