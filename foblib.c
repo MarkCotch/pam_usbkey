@@ -98,7 +98,7 @@ char *findKeyFOB(char *KeyDevice ) {
     if (_dev_Device->d_type != DT_BLK ) { continue; }
     if (strstr(_dev_Device->d_name, "sr0")) { continue; }
     /* Test if Media is present */
-    FILE *_devTmpFH=
+    FILE *_devTmpFH;
     /* Read first 31 bytes from block dev looking for SSH Key Signature.*/
     sprintf (__temp_path, "/dev/%s", _dev_Device->d_name );
     /* We use dd instead of directly opening the block device to get
