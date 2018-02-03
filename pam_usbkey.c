@@ -22,7 +22,7 @@
 #define __PUK_VERSION__  "0.0.2"
 #define __AUTHOR__ "Mark Coccimiglio"
 #ifndef __DEBUG__
-  #define __DEBUG__ (1)
+  #define __DEBUG__ (0)
 #endif
 
 #define PAM_SM_AUTH
@@ -102,7 +102,6 @@ PAM_EXTERN int
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
-        if (__DEBUG__) l_record("pre_token copied to token");
         if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         sanitizeString(token);
