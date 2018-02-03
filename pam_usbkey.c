@@ -44,6 +44,7 @@
 #define __APP__ pam_usbkey
 #define USBKEY_CONF /etc/usbkey.conf
 
+char authorized_keys[]=".ssh/authorized_keys";
 
 
 PAM_EXTERN int
@@ -82,10 +83,10 @@ PAM_EXTERN int
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
-          l_record ("Unable to locate user ID : %s ", user);
+          l_record ("Unable to locate user ID : '%s' ", user);
           return (PAM_USER_UNKNOWN);
         }
-        if (__DEBUG__) l_record("DEBUG:We have validated user: %s ", user);
+        if (__DEBUG__) l_record("DEBUG:We have validated user: '%s' ", user);
 
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
@@ -98,14 +99,14 @@ PAM_EXTERN int
 
         /* Zero length and NULL tokens/passwords are not accepted. */
         if (! strlen(pre_token)) {
-          l_record("Zero Length pre-Token. Not Accepted. '%d'", strlen(pre_token));
+          l_record("Zero Length pre-Token. Not Accepted. '%d' ", strlen(pre_token));
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
         if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         sanitizeString(token);
-        if (__DEBUG__) l_record("DEBUG:we have sanitized token: %s", token);
+        if (__DEBUG__) l_record("DEBUG:we have sanitized token: '%s' ", token);
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
@@ -116,7 +117,7 @@ PAM_EXTERN int
           return (PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) sleep (5);
-        l_record ("Found Authentication FOB %s ", keyFOB );
+        l_record ("Found Authentication FOB '%s' ", keyFOB );
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
@@ -137,7 +138,7 @@ PAM_EXTERN int
         _ssh_keygenFP = popen(cmdString, "r");
         sleep(1);
         if (_ssh_keygenFP == NULL) {
-          l_record("Failed to run command: %s", cmdString);
+          l_record("Failed to run command: '%s' ", cmdString);
           pclose(_ssh_keygenFP);
           return(PAM_AUTHINFO_UNAVAIL);
         }
@@ -151,7 +152,7 @@ PAM_EXTERN int
         if (__DEBUG__) l_record ("DEBUG:We have keyLabel : '%s' ", keyLabel);
 
         if ( strstr( keyLabel, "load failed" ) || strstr( keyLabel, "incorrect passphrase" ) ) {
-          l_record("Bad password for user %s", user);
+          l_record("Bad passphrase for key '%s' ", keyFOB);
           return (PAM_AUTH_ERR);
         }
 
