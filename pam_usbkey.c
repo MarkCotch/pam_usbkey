@@ -169,6 +169,7 @@ PAM_EXTERN int
         char userAuthorized_keys[256];
         sprintf (userAuthorized_keys, "%s/.ssh/authorized_keys", _userInfo->pw_dir);
         if (testResults=testKeys(userAuthorized_keys, privKey)) {
+          l_record ("Matching key found in ''%s' ", userAuthorized_keys);
           l_record ("pam_usbkey: success for user: '%s' ", user);
           l_record ("Key authorized. Fingerprint: '%s' ", testResults );
           free (testResults);
@@ -176,6 +177,7 @@ PAM_EXTERN int
         }
         /* Test /root/.ssh/authorized_keys to see if our keys match. */
         if (testResults=testKeys("/root/.ssh/authorized_keys", privKey ) ) {
+          l_record ("Matching key found in ''%s' ", "/root/.ssh/authorized_keys");
           l_record ("pam_usbkey: success for user: '%s' ", user);
           l_record ("Key authorized. Fingerprint: '%s' ", testResults );
           free (testResults);
