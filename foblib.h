@@ -25,6 +25,7 @@
   char   *genRandomTempDir(char *);
   int     testForBadChar(const char *);
   char   *sanitizeString( char * );
+  char   *testKeys (const char *, const char *);
   typedef struct sshKey sshKey;
   struct sshKey {
      char type[25];

@@ -23,8 +23,8 @@
 #   Required packages for this script:
 #   BASH, PERL, AT
 
-export DEBUG=1
-export _VERSION='0.0.1'
+export DEBUG=0
+export _VERSION='0.9.0'
 export _authorized_keys='/root/.ssh/authorized_keys'
 export _userAuthFile='./DumpFile.txt'
 

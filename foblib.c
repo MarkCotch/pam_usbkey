@@ -21,6 +21,7 @@
 #ifndef FOBLIBC
   #define FOBLIBC
   #include <stdio.h>
+  #include <stdlib.h>
   #include <string.h>
   #include <time.h>
   #include <pwd.h>
@@ -32,6 +33,9 @@
   #endif
   #ifndef TRUE
     #define TRUE (!FALSE)
+  #endif
+  #ifndef __DEBUG__
+    #define __DEBUG__ (0)
   #endif
   typedef struct sshKey sshKey;
   struct sshKey {
@@ -120,4 +124,85 @@ char *findKeyFOB(char *KeyDevice ) {
   }
   closedir(_devFP);
   return (NULL);
+}
+
+char *testKeys (const char *authorized_keys, const char *FOBKEY) {
+  FILE *authFP;
+  char pubKeyToTest[512]={0};
+
+  /* opening file for reading */
+  authFP = fopen(authorized_keys , "r");
+  if(authFP == NULL) {
+    if (__DEBUG__) l_record("DEBUG: Error opening file %s ", (void**) authorized_keys);
+    return(NULL);
+  }
+  while ( fgets ( pubKeyToTest, 512, authFP) !=NULL ) {
+    if (__DEBUG__) l_record ("DEBUG:Trying Key: '%s' ", (void **) pubKeyToTest);
+    if ( ! strlen(pubKeyToTest) ) {
+      l_record ("pubKeyToTest length NULL...continue.", (void **) NULL);
+      continue;
+    }
+    strtok(pubKeyToTest, "\n");
+    if(strstr(pubKeyToTest, FOBKEY) != NULL) {
+      /* Key matches.  Record key signature and return PAM_SUCCESS*/
+      fclose (authFP);
+
+      FILE *_tempPubKeyFH;
+      char *_tmpTimeString;
+      char _tmpfile[256]={0};
+      int rval;
+
+      srand(time(NULL));
+      rval=rand();
+      time_t _now=time(NULL);
+      sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", _now, rval);
+
+      if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", (void **) _tmpfile);
+      if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
+        l_record ("Unable to open file '%s' for write", (void **) _tempPubKeyFH);
+        fclose (_tempPubKeyFH);
+        fclose (authFP);
+        return (NULL);
+      }
+
+      fputs (pubKeyToTest, _tempPubKeyFH);
+      fclose (_tempPubKeyFH);
+
+      FILE *_tGetSigFH;
+      /* char _sVal[512]={0}; */
+      char *_sVal=malloc(512 * sizeof(char));
+      char getSigCmd[1024]={0};
+      /* strtok(pubKeyToTest, "\n"); */
+      sprintf(getSigCmd, "/usr/bin/ssh-keygen -lf %s " , _tmpfile);
+      if (__DEBUG__) l_record ("DEBUG:Running: '%s' ", (void **) getSigCmd);
+
+      _tGetSigFH=popen(getSigCmd, "r");
+      /* if (__DEBUG__) sleep (1); */
+      if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint.", (void **) NULL);
+        pclose (_tGetSigFH);
+        return (NULL);
+      }
+      if (__DEBUG__) {
+        if (_tGetSigFH) l_record ("DEBUG:Command run successfull.", (void **) NULL);
+      }
+
+      fgets( _sVal, 512, _tGetSigFH );
+      strtok(_sVal, "\n");
+
+      /* l_record ("Key authorized for user: '%s' ", user); */
+      /* l_record ("Key authorized. Fingerprint: '%s' ", _sVal ); */
+      pclose (_tGetSigFH);
+
+      if (__DEBUG__) l_record ("DEBUG: Removing temp file %s", (void **) _tmpfile);
+      if (remove (_tmpfile)) l_record ("Removing temp file %s FAILED.", (void**) _tmpfile);
+
+      return (_sVal);
+
+    }
+  }
+
+/* no matching key found */
+return (NULL);
+
+
 }

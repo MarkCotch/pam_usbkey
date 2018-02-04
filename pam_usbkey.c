@@ -19,8 +19,9 @@
 
 */
 
-#define __PUK_VERSION__  "0.0.2"
+#define __PUK_VERSION__  "0.9.0"
 #define __AUTHOR__ "Mark Coccimiglio"
+#define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #ifndef __DEBUG__
   #define __DEBUG__ (0)
 #endif
@@ -163,80 +164,25 @@ PAM_EXTERN int
         privKey=strtok(NULL , " \n");
         if (__DEBUG__) l_record ("DEBUG:privKey is: '%s' ", privKey);
 
-        /* Next we need to roll through ~/.ssh/authorized_keys and/or
-           /root/.ssh/authorized_keys to see if our keys match. */
-
-        FILE *authFP;
-        char pubKeyToTest[512]={0};
-
-        /* opening file for reading */
-        authFP = fopen("/root/.ssh/authorized_keys" , "r");
-        if(authFP == NULL) {
-          l_record("Error opening file /root/.ssh/authorized_keys");
-          return(PAM_AUTHINFO_UNAVAIL);
+        char *testResults;
+        /* Test ~/.ssh/authorized_keys to see if our keys match. */
+        char userAuthorized_keys[256];
+        sprintf (userAuthorized_keys, "%s/.ssh/authorized_keys", _userInfo->pw_dir);
+        if (testResults=testKeys(userAuthorized_keys, privKey)) {
+          l_record ("pam_usbkey: success for user: '%s' ", user);
+          l_record ("Key authorized. Fingerprint: '%s' ", testResults );
+          free (testResults);
+          return (PAM_SUCCESS);
         }
-
-        while ( fgets ( pubKeyToTest, 512, authFP) !=NULL ) {
-          if (__DEBUG__) l_record ("DEBUG:Trying Key: '%s' ", pubKeyToTest);
-          if ( ! strlen(pubKeyToTest) ) {
-            l_record ("pubKeyToTest length NULL...continue.");
-            continue;
-          }
-          strtok(pubKeyToTest, "\n");
-          if(strstr(pubKeyToTest, privKey) != NULL) {
-            /* Key matches.  Record key signature and return PAM_SUCCESS*/
-            fclose (authFP);
-            l_record ("pam_usbkey: success for user '%s' ", user);
-
-            FILE *_tempPubKeyFH;
-            char *_tmpTimeString;
-            char _tmpfile[256]={0};
-            int rval;
-
-            srand(time(NULL));
-            rval=rand();
-            time_t _now=time(NULL);
-            sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", _now, rval);
-
-            if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", _tmpfile);
-            if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
-              l_record ("Unable to open file '%s' for write", _tempPubKeyFH);
-              fclose (_tempPubKeyFH);
-              return (PAM_AUTHINFO_UNAVAIL);
-            }
-
-            fputs (pubKeyToTest, _tempPubKeyFH);
-            fclose (_tempPubKeyFH);
-
-            FILE *_tGetSigFH;
-            char _sVal[512]={0};
-            char getSigCmd[1024]={0};
-            /* strtok(pubKeyToTest, "\n"); */
-            sprintf(getSigCmd, "/usr/bin/ssh-keygen -lf %s " , _tmpfile);
-            if (__DEBUG__) l_record ("DEBUG:Running: '%s' ", getSigCmd);
-
-            _tGetSigFH=popen(getSigCmd, "r");
-            /* if (__DEBUG__) sleep (1); */
-            if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint."); pclose (_tGetSigFH); return (PAM_AUTHINFO_UNAVAIL); }
-            if (__DEBUG__) { if (_tGetSigFH) l_record ("DEBUG:Command run successfull."); }
-
-            fgets( _sVal, 512, _tGetSigFH );
-            strtok(_sVal, "\n");
-
-            /* l_record ("Key authorized for user: '%s' ", user); */
-            l_record ("Key authorized. Fingerprint: '%s' ", _sVal );
-            pclose (_tGetSigFH);
-
-            if (__DEBUG__) l_record ("DEBUG: Removing temp file %s", _tmpfile);
-            if (remove (_tmpfile)) l_record ("Removing temp file %s FAILED.", _tmpfile);
-
-            return (PAM_SUCCESS);
-
-          }
+        /* Test /root/.ssh/authorized_keys to see if our keys match. */
+        if (testResults=testKeys("/root/.ssh/authorized_keys", privKey ) ) {
+          l_record ("pam_usbkey: success for user: '%s' ", user);
+          l_record ("Key authorized. Fingerprint: '%s' ", testResults );
+          free (testResults);
+          return (PAM_SUCCESS);
         }
 
         l_record ("pam_usbkey: Credentials for %s not found", user );
-        fclose (authFP);
         return (PAM_AUTHINFO_UNAVAIL);
 
   }
