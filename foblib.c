@@ -155,7 +155,7 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       srand(time(NULL));
       rval=rand();
       time_t _now=time(NULL);
-      sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", _now, rval);
+      sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", (int) _now, rval);
 
       if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", (void **) _tmpfile);
       if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
