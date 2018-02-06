@@ -29,6 +29,7 @@ install_debian: install_"debian"
 install_"fedora":
 	install -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
+	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$1($2+1)($3)/' /etc/pam.d/system-auth
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/system-auth
 	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/system-auth
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/password-auth
@@ -48,6 +49,7 @@ uninstall_debian: uninstall_"debian"
 uninstall_"fedora":
 	rm -vf /usr/lib64/security/pam_usbkey.so
 	rm -vf /usr/sbin/keytemp
+	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$1($2-1)($3)/' /etc/pam.d/system-auth
 	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/system-auth
 	perl -i -pe 's/^#(auth.*pam_localuser.so.*$$)/$1/' /etc/pam.d/system-auth
 	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/password-auth
