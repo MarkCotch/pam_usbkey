@@ -60,7 +60,6 @@ PAM_EXTERN int
         char token[128]={0};
         int             rval;
         char _tempString[256]={0};
-        c
 
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
 

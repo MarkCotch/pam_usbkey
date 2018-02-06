@@ -26,7 +26,7 @@
   int     testForBadChar(const char *);
   char   *sanitizeString( char * );
   char   *testKeys (const char *, const char *);
-  int     _validServices(char *);
+  int     _validServices(const char *);
   typedef struct sshKey sshKey;
   struct sshKey {
      char type[25];
