@@ -69,12 +69,14 @@ PAM_EXTERN int
         }
         if (__DEBUG__) l_record("DEBUG:We have service '%s' ...continue. ", service);
 
+        /*
         if (! _validServices(service) ) {
           if (__DEBUG__) l_record("DEBUG:Requested Service '%s' not recognized. STOP.");
           return (PAM_CRED_INSUFFICIENT);
         }
         if (__DEBUG__) l_record("DEBUG:Requested Service '%s' recognized...continue.");
-
+        */
+        
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           l_record ("Unable to retrieve the PAM user name for :%s STOP.", user);
           return (PAM_USER_UNKNOWN);
