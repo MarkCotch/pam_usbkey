@@ -206,3 +206,8 @@ return (NULL);
 
 
 }
+
+int _validServices(char *requestedService) {
+  char *_validServices[]={"ssh", "login", "gdm-password"};
+  return (1);
+}

@@ -23,7 +23,7 @@
 #define __AUTHOR__ "Mark Coccimiglio"
 #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #ifndef __DEBUG__
-  #define __DEBUG__ (0)
+  #define __DEBUG__ (1)
 #endif
 
 #define PAM_SM_AUTH
@@ -60,61 +60,68 @@ PAM_EXTERN int
         char token[128]={0};
         int             rval;
         char _tempString[256]={0};
+        c
 
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
 
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
-          l_record ("Unable to retrieve the PAM service name for :%s", service);
+          l_record ("Unable to retrieve the PAM service name for :%s STOP.", service);
           return (PAM_AUTH_ERR);
         }
-        if (__DEBUG__) l_record("DEBUG:We have service %s ", service);
+        if (__DEBUG__) l_record("DEBUG:We have service '%s' ...continue. ", service);
 
-        if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
-          l_record ("Unable to retrieve the PAM user name for :%s", user);
-          return (PAM_USER_UNKNOWN);
-        }
-        if (__DEBUG__) l_record("DEBUG:We have user: %s ", user);
-
-        if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
-          l_record("pre-Token is NULL. Not accepted.");
+        if (! _validServices(service) ) {
+          if (__DEBUG__) l_record("DEBUG:Requested Service '%s' not recognized. STOP.");
           return (PAM_CRED_INSUFFICIENT);
         }
-        if (__DEBUG__) l_record("DEBUG:We have pre_token: %s", pre_token);
+        if (__DEBUG__) l_record("DEBUG:Requested Service '%s' recognized...continue.");
+
+        if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
+          l_record ("Unable to retrieve the PAM user name for :%s STOP.", user);
+          return (PAM_USER_UNKNOWN);
+        }
+        if (__DEBUG__) l_record("DEBUG:We have user: '%s' ...continue.", user);
+
+        if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
+          l_record("pre-Token is NULL. Not accepted. STOP.");
+          return (PAM_CRED_INSUFFICIENT);
+        }
+        if (__DEBUG__) l_record("DEBUG:We have pre_token: %s ...continue.", pre_token);
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
-          l_record ("Unable to locate user ID : '%s' ", user);
+          l_record ("Unable to locate user ID : '%s' STOP.", user);
           return (PAM_USER_UNKNOWN);
         }
-        if (__DEBUG__) l_record("DEBUG:We have validated user: '%s' ", user);
+        if (__DEBUG__) l_record("DEBUG:We have validated user: '%s' ...continue.", user);
 
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
-          l_record("User home directory: '%s' not found on system.", _userInfo->pw_dir);
+          l_record("User home directory: '%s' not found on system. STOP.", _userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
         closedir (_homeDIR);
-        if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ", _userInfo->pw_dir);
+        if (__DEBUG__) l_record("DEBUG:we have validated home dir: '%s' ...continue.", _userInfo->pw_dir);
 
         /* Zero length and NULL tokens/passwords are not accepted. */
         if (! strlen(pre_token)) {
-          l_record("Zero Length pre-Token. Not Accepted. '%d' ", strlen(pre_token));
+          l_record("Zero Length pre-Token. Not Accepted. '%d' STOP.", strlen(pre_token));
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
-        if (__DEBUG__) l_record("DEBUG:We have non-NULL token.");
+        if (__DEBUG__) l_record("DEBUG:We have non-NULL token ...continue.");
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         sanitizeString(token);
-        if (__DEBUG__) l_record("DEBUG:we have sanitized token: '%s' ", token);
+        if (__DEBUG__) l_record("DEBUG:we have sanitized token: '%s' ...continue.", token);
 
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
         if (! findKeyFOB(keyFOB) ) {
           /* This represents a failure to to find an authentication
               FOB.  At this point we should fail out silently unless DEBUG.*/
-          if (__DEBUG__) l_record("DEBUG:No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL");
+          if (__DEBUG__) l_record("DEBUG:No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL . STOP.");
           return (PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) sleep (5);
@@ -139,7 +146,7 @@ PAM_EXTERN int
         _ssh_keygenFP = popen(cmdString, "r");
         sleep(1);
         if (_ssh_keygenFP == NULL) {
-          l_record("Failed to run command: '%s' ", cmdString);
+          l_record("Failed to run command: '%s' STOP.", cmdString);
           pclose(_ssh_keygenFP);
           return(PAM_AUTHINFO_UNAVAIL);
         }
