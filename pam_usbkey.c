@@ -23,7 +23,7 @@
 #define __AUTHOR__ "Mark Coccimiglio"
 #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #ifndef __DEBUG__
-  #define __DEBUG__ (1)
+  #define __DEBUG__ (0)
 #endif
 
 #define PAM_SM_AUTH
@@ -76,7 +76,7 @@ PAM_EXTERN int
         }
         if (__DEBUG__) l_record("DEBUG:Requested Service '%s' recognized...continue.");
         */
-        
+
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           l_record ("Unable to retrieve the PAM user name for :%s STOP.", user);
           return (PAM_USER_UNKNOWN);
@@ -122,7 +122,7 @@ PAM_EXTERN int
         if (! findKeyFOB(keyFOB) ) {
           /* This represents a failure to to find an authentication
               FOB.  At this point we should fail out silently unless DEBUG.*/
-          if (__DEBUG__) l_record("DEBUG:No Key FOB found. Returning PAM_AUTHINFO_UNAVAIL . STOP.");
+          l_record("pam_usbkey(%s:auth): No authentication key present.", service);
           return (PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) sleep (5);
