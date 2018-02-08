@@ -78,13 +78,15 @@ PAM_EXTERN int
         */
 
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
-          l_record ("Unable to retrieve the PAM user name for :%s STOP.", user);
+          char __tempNotice[256]={0};
+          sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user);
+          l_record (__tempNotice);
           return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have user: '%s' ...continue.", user);
 
         if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
-          l_record("pre-Token is NULL. Not accepted. STOP.");
+          l_record("pam_usbkey(%s:auth): Provided token FAILED, is NULL, or Zero Length", service);
           return (PAM_CRED_INSUFFICIENT);
         }
         if (__DEBUG__) l_record("DEBUG:We have pre_token: %s ...continue.", pre_token);
@@ -92,14 +94,18 @@ PAM_EXTERN int
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
-          l_record ("Unable to locate user ID : '%s' STOP.", user);
+          char __tempNotice[256]={0};
+          sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to locate user ID : '%s' STOP.", service, user);
+          l_record (__tempNotice);
           return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) l_record("DEBUG:We have validated user: '%s' ...continue.", user);
 
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
-          l_record("User home directory: '%s' not found on system. STOP.", _userInfo->pw_dir);
+          char __tempNotice[256]={0};
+          sprintf(__tempNotice, "pam_usbkey(%s:auth): User home directory: '%s' not found on system.", service, _userInfo->pw_dir);
+          l_record(__tempNotice);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
@@ -126,7 +132,9 @@ PAM_EXTERN int
           return (PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) sleep (5);
-        l_record ("Found Authentication FOB '%s' ", keyFOB );
+
+        sprintf (_tempString, "pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
+        l_record ( _tempString );
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
@@ -139,7 +147,7 @@ PAM_EXTERN int
 
         FILE *_ssh_keygenFP;
         char cmdString[1024]={0};
-        /* sprintf(cmdString,
+        /* sprintf(cmdString,;
            "grep \"$(ssh-keygen -P \"%s\" -y -f %s 2>&1 )\" %s/.ssh/authorized_keys /root/.ssh/authorized_keys 2> /dev/null | head -1"
            ,token, keyFOB, _userInfo->pw_dir); */
         sprintf(cmdString, "ssh-keygen -P \"%s\" -y -f %s 2>&1", token, keyFOB );
@@ -155,13 +163,15 @@ PAM_EXTERN int
         pclose(_ssh_keygenFP);
 
         if (! keyLabel) {
-          l_record("Derived pubkey from private returned no data.");
+          l_record("pam_usbkey(%s:auth): Derived pubkey from private returned no data.", service);
           return(PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) l_record ("DEBUG:We have keyLabel : '%s' ", keyLabel);
 
         if ( strstr( keyLabel, "load failed" ) || strstr( keyLabel, "incorrect passphrase" ) ) {
-          l_record("Bad passphrase for key '%s' ", keyFOB);
+          char __tempNotice[256]={0};
+          sprintf (__tempNotice, "pam_usbkey(%s:auth): Bad passphrase for key '%s' ", service, keyFOB);
+          l_record(__tempNotice);
           return (PAM_AUTH_ERR);
         }
 
