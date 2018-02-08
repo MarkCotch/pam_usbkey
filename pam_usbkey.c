@@ -69,6 +69,10 @@ PAM_EXTERN int
         }
         if (__DEBUG__) l_record("DEBUG:We have service '%s' ...continue. ", service);
 
+        if ( strstr(service, "sudo") || strstr (service , "su")  ) {
+          if (__DEBUG__) l_record("We do not authenticate for su/sudo services.");
+          return (PAM_CRED_INSUFFICIENT);
+        }
         /*
         if (! _validServices(service) ) {
           if (__DEBUG__) l_record("DEBUG:Requested Service '%s' not recognized. STOP.");
@@ -80,6 +84,7 @@ PAM_EXTERN int
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           char __tempNotice[256]={0};
           sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user);
+          /* printf ("pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user); */
           l_record (__tempNotice);
           return (PAM_USER_UNKNOWN);
         }
