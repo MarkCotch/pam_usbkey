@@ -63,6 +63,9 @@ PAM_EXTERN int
 
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
 
+        /* Prime the Pseudo RNG. foblib.c needs this.*/
+        srand(getSeed());
+
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           l_record ("Unable to retrieve the PAM service name for :%s STOP.", service);
           return (PAM_AUTH_ERR);

@@ -27,6 +27,7 @@
   char   *sanitizeString( char * );
   char   *testKeys (const char *, const char *);
   int     _validServices(const char *);
+  int     getSeed(void);
   typedef struct sshKey sshKey;
   struct sshKey {
      char type[25];

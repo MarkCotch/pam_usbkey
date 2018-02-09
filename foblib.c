@@ -126,6 +126,20 @@ char *findKeyFOB(char *KeyDevice ) {
   return (NULL);
 }
 
+int getSeed(void) {
+  int loop=0;
+  union {
+    int i;
+    char c[sizeof(int)];
+  } seedValue;
+  FILE *RSFH=fopen("/dev/urandom", "r");
+
+  for (loop=0 ; loop < sizeof(int) ; loop++) {
+		seedValue.c[loop]=fgetc(RSFH);
+	}
+  return (seedValue.i);
+}
+
 char *testKeys (const char *authorized_keys, const char *FOBKEY) {
   FILE *authFP;
   char pubKeyToTest[512]={0};
@@ -152,7 +166,6 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       char _tmpfile[256]={0};
       int rval;
 
-      srand(time(NULL));
       rval=rand();
       time_t _now=time(NULL);
       sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", (int) _now, rval);
