@@ -133,10 +133,10 @@ int getSeed(void) {
     char c[sizeof(int)];
   } seedValue;
   FILE *RSFH=fopen("/dev/urandom", "r");
-
   for (loop=0 ; loop < sizeof(int) ; loop++) {
 		seedValue.c[loop]=fgetc(RSFH);
 	}
+  fclose(RSFH);
   return (seedValue.i);
 }
 
