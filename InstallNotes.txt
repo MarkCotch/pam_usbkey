@@ -1,5 +1,6 @@
 Installation should be rather simple.
 
+Build Dependecies: pam-devel
 Dependencies: glibc-headers pam-devel perl openssl-devel at
 
 From package root type:
