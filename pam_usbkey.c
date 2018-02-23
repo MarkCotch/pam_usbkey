@@ -25,7 +25,7 @@
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #endif
 #ifndef __DEBUG__
-  #define __DEBUG__ (0)
+  #define __DEBUG__ (config.debug)
 #endif
 
 #define PAM_SM_AUTH
@@ -55,7 +55,8 @@ struct configuration {
   char *authorized_keys;
   char *rootAuthorized_keys;
   char *deviceNoExamine;
-} config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3"} ;
+  int debug;
+} config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
 
 
 
