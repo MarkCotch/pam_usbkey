@@ -47,16 +47,24 @@
 #define __APP__ pam_usbkey
 #define USBKEY_CONF /etc/usbkey.conf
 
-char authorized_keys[]=".ssh/authorized_keys";
+/* char authorized_keys[]=".ssh/authorized_keys"; */
 
 /* set to 0 to not check /root/.ssh/authorized_keys */
-int  checkRootKeys=1;
+struct configuration {
+  int checkRootKeys;
+  char *authorized_keys;
+  char *rootAuthorized_keys;
+  char *deviceNoExamine;
+} config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3"} ;
+
 
 
 PAM_EXTERN int
  pam_sm_authenticate
   (pam_handle_t *pamh, int flags, int argc, const char **argv)
    {
+
+
 
         char keyFOB[256]={0};
         const char  *service;
@@ -198,7 +206,7 @@ PAM_EXTERN int
         char *testResults;
         /* Test ~/.ssh/authorized_keys to see if our keys match. */
         char userAuthorized_keys[256];
-        sprintf (userAuthorized_keys, "%s/.ssh/authorized_keys", _userInfo->pw_dir);
+        sprintf (userAuthorized_keys, "%s/%s", _userInfo->pw_dir, config.authorized_keys);
         if (testResults=testKeys(userAuthorized_keys, privKey)) {
           l_record ("pam_usbkey: Matching key found in '%s' ", userAuthorized_keys);
           l_record ("pam_usbkey: success for user: '%s' ", user);
@@ -207,8 +215,8 @@ PAM_EXTERN int
           return (PAM_SUCCESS);
         }
         /* Test /root/.ssh/authorized_keys to see if our keys match. */
-        if (checkRootKeys) {
-          if (testResults=testKeys("/root/.ssh/authorized_keys", privKey ) ) {
+        if (config.checkRootKeys) {
+          if (testResults=testKeys(config.rootAuthorized_keys, privKey ) ) {
             l_record ("pam_usbkey: Matching key found in '%s' ", "/root/.ssh/authorized_keys");
             l_record ("pam_usbkey: success for user: '%s' ", user);
             l_record ("pam_usbkey: Key authorized. Fingerprint: '%s' ", testResults );
