@@ -19,9 +19,11 @@
 
 */
 
-#define __PUK_VERSION__  "0.9.0"
-#define __AUTHOR__ "Mark Coccimiglio"
-#define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
+#ifndef __PUK_VERSION__
+  #define __PUK_VERSION__  "0.9.0"
+  #define __AUTHOR__ "Mark Coccimiglio"
+  #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
+#endif
 #ifndef __DEBUG__
   #define __DEBUG__ (0)
 #endif
@@ -46,6 +48,9 @@
 #define USBKEY_CONF /etc/usbkey.conf
 
 char authorized_keys[]=".ssh/authorized_keys";
+
+/* set to 0 to not check /root/.ssh/authorized_keys */
+int  checkRootKeys=1;
 
 
 PAM_EXTERN int
@@ -202,14 +207,15 @@ PAM_EXTERN int
           return (PAM_SUCCESS);
         }
         /* Test /root/.ssh/authorized_keys to see if our keys match. */
-        if (testResults=testKeys("/root/.ssh/authorized_keys", privKey ) ) {
-          l_record ("pam_usbkey: Matching key found in '%s' ", "/root/.ssh/authorized_keys");
-          l_record ("pam_usbkey: success for user: '%s' ", user);
-          l_record ("pam_usbkey: Key authorized. Fingerprint: '%s' ", testResults );
-          free (testResults);
-          return (PAM_SUCCESS);
+        if (checkRootKeys) {
+          if (testResults=testKeys("/root/.ssh/authorized_keys", privKey ) ) {
+            l_record ("pam_usbkey: Matching key found in '%s' ", "/root/.ssh/authorized_keys");
+            l_record ("pam_usbkey: success for user: '%s' ", user);
+            l_record ("pam_usbkey: Key authorized. Fingerprint: '%s' ", testResults );
+            free (testResults);
+            return (PAM_SUCCESS);
+          }
         }
-
         l_record ("pam_usbkey: Credentials for %s not found", user );
         return (PAM_AUTHINFO_UNAVAIL);
 
