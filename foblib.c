@@ -47,7 +47,7 @@
 #endif
 
 void l_record (char* _message, void **printParam) {
-  openlog("pam_usbkey", LOG_PID, LOG_AUTHPRIV);
+  openlog(NULL , LOG_PID, LOG_AUTHPRIV);
   syslog(LOG_NOTICE, _message, printParam);
   closelog();
 
