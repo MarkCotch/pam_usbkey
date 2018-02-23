@@ -20,7 +20,7 @@
 */
 
 #ifndef __PUK_VERSION__
-  #define __PUK_VERSION__  "0.9.0"
+  #define __PUK_VERSION__  "0.9.1"
   #define __AUTHOR__ "Mark Coccimiglio"
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #endif
@@ -45,18 +45,12 @@
 #include "foblib.h"
 
 #define __APP__ pam_usbkey
-#define USBKEY_CONF /etc/usbkey.conf
+#define USBKEY_CONF "/etc/usbkey.conf"
 
 /* char authorized_keys[]=".ssh/authorized_keys"; */
 
 /* set to 0 to not check /root/.ssh/authorized_keys */
-struct configuration {
-  int checkRootKeys;
-  char *authorized_keys;
-  char *rootAuthorized_keys;
-  char *deviceNoExamine;
-  int debug;
-} config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
+
 
 
 
@@ -64,8 +58,6 @@ PAM_EXTERN int
  pam_sm_authenticate
   (pam_handle_t *pamh, int flags, int argc, const char **argv)
    {
-
-
 
         char keyFOB[256]={0};
         const char  *service;
@@ -75,7 +67,16 @@ PAM_EXTERN int
         int             rval;
         char _tempString[256]={0};
 
+        /* load configuration at USBKEY_CONF This needs some work. */
+
+        struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
+        /*
+        if (! loadConfig( &config ) ) {
+          if (__DEBUG__) l_record("DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
+        }
+
         if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_authenticate called. ");
+        */
 
         /* Prime the Pseudo RNG. foblib.c needs this.*/
         srand(getSeed());
@@ -234,7 +235,12 @@ PAM_EXTERN int
   pam_sm_setcred
    (pam_handle_t *pamh,int flags,int argc, const char **argv)
     {
-        if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
-        return (PAM_SUCCESS);
+      /* load configuration at USBKEY_CONF */
+      struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 1 } ;
+      if (! loadConfig( &config ) ) {
+        if (__DEBUG__) l_record("DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
+      }
+      if (__DEBUG__) l_record("DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
+      return (PAM_SUCCESS);
 
     }

@@ -44,14 +44,75 @@
      char tag[256];
   };
 
+  struct configuration {
+    int checkRootKeys;
+    char authorized_keys[256];
+    char rootAuthorized_keys[256];
+    char deviceNoExamine[256];
+    int debug;
+  };
+  #define USBKEY_CONF "/etc/usbkey.conf"
 #endif
 
+/* void    l_record (char *, ...); */
 void l_record (char* _message, void **printParam) {
   openlog(NULL , LOG_PID, LOG_AUTHPRIV);
   syslog(LOG_NOTICE, _message, printParam);
   closelog();
 
 }
+
+struct configuration *loadConfig(struct configuration *cfg) {
+  char linefromCFG[512];
+  char __buff[512];
+  char *_key;
+  char *_value;
+  FILE *cfgFH=fopen(USBKEY_CONF, "r");
+  if (! cfgFH) return (NULL);
+  while ( fgets (linefromCFG, sizeof(linefromCFG), cfgFH )) {
+    strtok(linefromCFG, "\n");
+    sscanf(__buff, "%s", linefromCFG);
+    /* remove comments and whitespace lines*/
+    if (! __buff[0])    continue;
+    if (__buff[0]=='#')  continue;
+    if (__buff[0]=='\n') continue;
+    /* remove comments from end-of-line */
+    strtok(__buff, "#");
+    strcpy(linefromCFG, __buff);
+    /* breakout key/value pairs*/
+    _key=strtok(linefromCFG, "=\n");
+    _value=strtok(NULL, "=\n");
+    sscanf(__buff, "%s", _key);
+    strcpy(_key,__buff);
+    sscanf(__buff, "%s", _value);
+    strcpy(_value,__buff);
+    /* NULL keys are ignored.*/
+    if (! _key[0]) continue;
+
+    /* Test for config choices*/
+    if (strstr("checkRootKeys", _key)) {
+      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1')
+        cfg->checkRootKeys=TRUE;
+      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0')
+        cfg->checkRootKeys=FALSE;
+      continue;
+    }
+    if (strstr("debug", _key)) {
+      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1')
+        cfg->debug=TRUE;
+      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0')
+        cfg->debug=FALSE;
+      continue;
+    }
+
+
+
+
+  }
+
+  fclose(cfgFH);
+  return (NULL);
+};
 
 int testForBadChar(char _testString[]){
   /* Bad Characters  "   '   $  *   \         */

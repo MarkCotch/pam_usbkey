@@ -20,7 +20,17 @@
 */
 #ifndef FOBLIBH
   #define FOBLIBH
+
+  struct configuration {
+    int checkRootKeys;
+    char authorized_keys[256];
+    char rootAuthorized_keys[256];
+    char deviceNoExamine[256];
+    int debug;
+  };
+
   void    l_record (char *, ...);
+  struct configuration *loadConfig(struct configuration *cfg);
   char   *findKeyFOB (char *);
   char   *genRandomTempDir(char *);
   int     testForBadChar(const char *);
