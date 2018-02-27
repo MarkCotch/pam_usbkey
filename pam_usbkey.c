@@ -56,7 +56,7 @@
 
 PAM_EXTERN int
  pam_sm_authenticate
-  (pam_handle_t *pamh, int flags, int argc, const char **argv)
+  (pam_handle_t *pamh, int flags, int argc, const char *argv[])
    {
 
         char keyFOB[256]={0};
@@ -269,5 +269,3 @@ PAM_EXTERN int
     (pam_handle_t *pamh, int flags, int argc, const char *argv[]) {
       return (PAM_SERVICE_ERR);
 }
-
-    
