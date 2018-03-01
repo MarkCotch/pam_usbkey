@@ -51,6 +51,7 @@
 
 /* set to 0 to not check /root/.ssh/authorized_keys */
 
+struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
 
 
 
@@ -69,7 +70,6 @@ PAM_EXTERN int
 
         /* load configuration at USBKEY_CONF This needs some work. */
 
-        struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
         /*
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) l_record("DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
@@ -236,7 +236,6 @@ PAM_EXTERN int
    (pam_handle_t *pamh,int flags,int argc, const char **argv)
     {
       /* load configuration at USBKEY_CONF */
-      struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 1 } ;
       if (! loadConfig( &config ) ) {
         if (__DEBUG__) l_record("DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
       }
@@ -269,5 +268,3 @@ PAM_EXTERN int
     (pam_handle_t *pamh, int flags, int argc, const char *argv[]) {
       return (PAM_SERVICE_ERR);
 }
-
-    
