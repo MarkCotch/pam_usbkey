@@ -22,6 +22,7 @@
   #define FOBLIBC
   #include <stdio.h>
   #include <stdlib.h>
+  #include <stdarg.h>
   #include <string.h>
   #include <time.h>
   #include <pwd.h>
@@ -35,7 +36,7 @@
     #define TRUE (!FALSE)
   #endif
   #ifndef __DEBUG__
-    #define __DEBUG__ (0)
+    #define __DEBUG__ (1)
   #endif
   typedef struct sshKey sshKey;
   struct sshKey {
@@ -55,11 +56,18 @@
 #endif
 
 /* void    l_record (char *, ...); */
-void l_record (char* _message, void **printParam) {
-  openlog(NULL , LOG_PID, LOG_AUTHPRIV);
-  syslog(LOG_NOTICE, _message, printParam);
-  closelog();
 
+
+void v_record (char *_message, va_list myArgList ) {
+  /* openlog(NULL , LOG_PID, LOG_AUTHPRIV); */
+  syslog(LOG_NOTICE , _message , myArgList );
+  /* closelog(); */
+}
+void l_record(char *_message, ... ) {
+  va_list args;
+  va_start (args , _message);
+  v_record (_message, args);
+  va_end (args);
 }
 
 struct configuration *loadConfig(struct configuration *cfg) {
@@ -208,13 +216,13 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
   /* opening file for reading */
   authFP = fopen(authorized_keys , "r");
   if(authFP == NULL) {
-    if (__DEBUG__) l_record("DEBUG: Error opening file %s ", (void**) authorized_keys);
+    if (__DEBUG__) l_record("DEBUG: Error opening file %s ", authorized_keys);
     return(NULL);
   }
   while ( fgets ( pubKeyToTest, 512, authFP) !=NULL ) {
-    if (__DEBUG__) l_record ("DEBUG:Trying Key: '%s' ", (void **) pubKeyToTest);
+    if (__DEBUG__) l_record ("DEBUG:Trying Key: '%s' ",  pubKeyToTest);
     if ( ! strlen(pubKeyToTest) ) {
-      l_record ("pubKeyToTest length NULL...continue.", (void **) NULL);
+      l_record ("pubKeyToTest length NULL...continue.", NULL);
       continue;
     }
     strtok(pubKeyToTest, "\n");
@@ -231,9 +239,9 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       time_t _now=time(NULL);
       sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", (int) _now, rval);
 
-      if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", (void **) _tmpfile);
+      if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", _tmpfile);
       if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
-        l_record ("Unable to open file '%s' for write", (void **) _tempPubKeyFH);
+        l_record ("Unable to open file '%s' for write", _tempPubKeyFH);
         fclose (_tempPubKeyFH);
         fclose (authFP);
         return (NULL);
@@ -248,16 +256,16 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       char getSigCmd[1024]={0};
       /* strtok(pubKeyToTest, "\n"); */
       sprintf(getSigCmd, "/usr/bin/ssh-keygen -lf %s " , _tmpfile);
-      if (__DEBUG__) l_record ("DEBUG:Running: '%s' ", (void **) getSigCmd);
+      if (__DEBUG__) l_record ("DEBUG:Running: '%s' ", getSigCmd);
 
       _tGetSigFH=popen(getSigCmd, "r");
       /* if (__DEBUG__) sleep (1); */
-      if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint.", (void **) NULL);
+      if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint.", NULL);
         pclose (_tGetSigFH);
         return (NULL);
       }
       if (__DEBUG__) {
-        if (_tGetSigFH) l_record ("DEBUG:Command run successfull.", (void **) NULL);
+        if (_tGetSigFH) l_record ("DEBUG:Command run successfull.", NULL);
       }
 
       fgets( _sVal, 512, _tGetSigFH );
@@ -267,7 +275,7 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       /* l_record ("Key authorized. Fingerprint: '%s' ", _sVal ); */
       pclose (_tGetSigFH);
 
-      if (__DEBUG__) l_record ("DEBUG: Removing temp file %s", (void **) _tmpfile);
+      if (__DEBUG__) l_record ("DEBUG: Removing temp file %s", _tmpfile);
       if (remove (_tmpfile)) l_record ("Removing temp file %s FAILED.", (void**) _tmpfile);
 
       return (_sVal);
