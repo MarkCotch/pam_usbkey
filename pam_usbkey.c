@@ -25,7 +25,7 @@
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #endif
 #ifndef __DEBUG__
-  #define __DEBUG__ (config.debug)
+  #define __DEBUG__ config.debug
 #endif
 
 #define PAM_SM_AUTH
@@ -53,7 +53,7 @@
 
 /* set to 0 to not check /root/.ssh/authorized_keys */
 
-struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 1 } ;
+struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
 
 
 
@@ -72,11 +72,15 @@ PAM_EXTERN int
 
         /* load configuration at USBKEY_CONF This needs some work. */
 
-        
+
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
         }
-
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:checkRootKeys=%d",config.checkRootKeys);
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:authorized_keys=%s",config.authorized_keys);
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:rootAuthorized_keys=%s",config.rootAuthorized_keys);
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:deviceNoExamine=%s",config.deviceNoExamine);
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:debug=%d",config.debug);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_authenticate called. ");
 
 

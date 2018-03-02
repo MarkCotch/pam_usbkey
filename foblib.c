@@ -36,7 +36,7 @@
     #define TRUE (!FALSE)
   #endif
   #ifndef __DEBUG__
-    #define __DEBUG__ (1)
+    #define __DEBUG__ config.debug
   #endif
   typedef struct sshKey sshKey;
   struct sshKey {
@@ -55,6 +55,8 @@
   #define USBKEY_CONF "/etc/usbkey.conf"
 #endif
 
+extern struct configuration config;
+
 /* void    syslog (LOG_NOTICE, char *, ...); */
 
 
@@ -71,9 +73,8 @@ struct configuration *loadConfig(struct configuration *cfg) {
     if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have line from config file '%s' ", linefromCFG);
     sscanf(linefromCFG, "%s", __buff);
     /* remove comments and whitespace lines*/
-    if (strlen(__buff)>4) continue;
+    if (strlen(__buff)<4) continue;
     if (! __buff[0])    continue;
-    if (__buff[0]==' ')  continue;
     if (__buff[0]=='#')  continue;
     if (__buff[0]=='\n') continue;
     /* remove comments from end-of-line */
@@ -91,10 +92,14 @@ struct configuration *loadConfig(struct configuration *cfg) {
 
     /* Test for config choices*/
     if (strstr("checkRootKeys", _key)) {
-      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1')
+      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1') {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
         cfg->checkRootKeys=1;
-      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0')
+      }
+      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0') {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
         cfg->checkRootKeys=0;
+      }
       continue;
     }
     if (strstr("debug", _key)) {
@@ -109,16 +114,13 @@ struct configuration *loadConfig(struct configuration *cfg) {
       continue;
     }
 
-
-
-
   }
 
   fclose(cfgFH);
   if (__DEBUG__) syslog(LOG_NOTICE, "configuration->checkRootKeys: %d ", cfg->checkRootKeys);
   if (__DEBUG__) syslog(LOG_NOTICE, "configuration->debug: %d ", cfg->debug);
   if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG:foblib: Config file loaded. ");
-  return (1);
+  return (cfg);
 };
 
 int testForBadChar(char _testString[]){
