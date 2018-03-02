@@ -72,13 +72,13 @@ PAM_EXTERN int
 
         /* load configuration at USBKEY_CONF This needs some work. */
 
-        /*
+        
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
         }
 
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_authenticate called. ");
-        */
+
 
         /* Prime the Pseudo RNG. foblib.c needs this.*/
         srand(getSeed());

@@ -52,23 +52,11 @@
     char deviceNoExamine[256];
     int debug;
   };
-  #define USBKEY_CONF "/etc/usbkey.conf"
+  char USBKEY_CONF[]="/etc/usbkey.conf";
 #endif
 
-/* void    l_record (char *, ...); */
+/* void    syslog (LOG_NOTICE, char *, ...); */
 
-
-void v_record (char *_message, va_list myArgList ) {
-  /* openlog(NULL , LOG_PID, LOG_AUTHPRIV); */
-  syslog(LOG_NOTICE , _message , myArgList );
-  /* closelog(); */
-}
-void l_record(char *_message, ... ) {
-  va_list args;
-  va_start (args , _message);
-  v_record (_message, args);
-  va_end (args);
-}
 
 struct configuration *loadConfig(struct configuration *cfg) {
   char linefromCFG[512];
@@ -79,8 +67,9 @@ struct configuration *loadConfig(struct configuration *cfg) {
   if (! cfgFH) return (NULL);
   while ( fgets (linefromCFG, sizeof(linefromCFG), cfgFH )) {
     strtok(linefromCFG, "\n");
-    sscanf(__buff, "%s", linefromCFG);
+    sscanf(linefromCFG, "%s", __buff);
     /* remove comments and whitespace lines*/
+    if (strlen(__buff)>4) continue;
     if (! __buff[0])    continue;
     if (__buff[0]=='#')  continue;
     if (__buff[0]=='\n') continue;
@@ -90,9 +79,9 @@ struct configuration *loadConfig(struct configuration *cfg) {
     /* breakout key/value pairs*/
     _key=strtok(linefromCFG, "=\n");
     _value=strtok(NULL, "=\n");
-    sscanf(__buff, "%s", _key);
+    sscanf(_key, "%s", __buff);
     strcpy(_key,__buff);
-    sscanf(__buff, "%s", _value);
+    sscanf(_value, "%s", __buff);
     strcpy(_value,__buff);
     /* NULL keys are ignored.*/
     if (! _key[0]) continue;
@@ -100,16 +89,20 @@ struct configuration *loadConfig(struct configuration *cfg) {
     /* Test for config choices*/
     if (strstr("checkRootKeys", _key)) {
       if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1')
-        cfg->checkRootKeys=TRUE;
+        cfg->checkRootKeys=1;
       if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0')
-        cfg->checkRootKeys=FALSE;
+        cfg->checkRootKeys=0;
       continue;
     }
     if (strstr("debug", _key)) {
-      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1')
-        cfg->debug=TRUE;
-      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0')
-        cfg->debug=FALSE;
+      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1') {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE debug='%s' ", _value);
+        cfg->debug=1;
+      }
+      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0') {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set FALSE debug='%s' ", _value);
+        cfg->debug=0;
+      }
       continue;
     }
 
@@ -216,13 +209,13 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
   /* opening file for reading */
   authFP = fopen(authorized_keys , "r");
   if(authFP == NULL) {
-    if (__DEBUG__) l_record("DEBUG: Error opening file %s ", authorized_keys);
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG: Error opening file %s ", authorized_keys);
     return(NULL);
   }
   while ( fgets ( pubKeyToTest, 512, authFP) !=NULL ) {
-    if (__DEBUG__) l_record ("DEBUG:Trying Key: '%s' ",  pubKeyToTest);
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Trying Key: '%s' ",  pubKeyToTest);
     if ( ! strlen(pubKeyToTest) ) {
-      l_record ("pubKeyToTest length NULL...continue.", NULL);
+      syslog (LOG_NOTICE, "pubKeyToTest length NULL...continue.", NULL);
       continue;
     }
     strtok(pubKeyToTest, "\n");
@@ -239,9 +232,9 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       time_t _now=time(NULL);
       sprintf (_tmpfile, "/tmp/.pam_usbkey-%d-%d", (int) _now, rval);
 
-      if (__DEBUG__) l_record ("DEBUG:Creating temp file '%s'", _tmpfile);
+      if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Creating temp file '%s'", _tmpfile);
       if ( (_tempPubKeyFH=fopen(_tmpfile, "w")) == NULL ) {
-        l_record ("Unable to open file '%s' for write", _tempPubKeyFH);
+        syslog (LOG_NOTICE, "Unable to open file '%s' for write", _tempPubKeyFH);
         fclose (_tempPubKeyFH);
         fclose (authFP);
         return (NULL);
@@ -256,27 +249,27 @@ char *testKeys (const char *authorized_keys, const char *FOBKEY) {
       char getSigCmd[1024]={0};
       /* strtok(pubKeyToTest, "\n"); */
       sprintf(getSigCmd, "/usr/bin/ssh-keygen -lf %s " , _tmpfile);
-      if (__DEBUG__) l_record ("DEBUG:Running: '%s' ", getSigCmd);
+      if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Running: '%s' ", getSigCmd);
 
       _tGetSigFH=popen(getSigCmd, "r");
       /* if (__DEBUG__) sleep (1); */
-      if ( _tGetSigFH == NULL ) { l_record ("Failed to obtain key Fingreprint.", NULL);
+      if ( _tGetSigFH == NULL ) { syslog (LOG_NOTICE, "Failed to obtain key Fingreprint.", NULL);
         pclose (_tGetSigFH);
         return (NULL);
       }
       if (__DEBUG__) {
-        if (_tGetSigFH) l_record ("DEBUG:Command run successfull.", NULL);
+        if (_tGetSigFH) syslog (LOG_NOTICE, "DEBUG:Command run successfull.", NULL);
       }
 
       fgets( _sVal, 512, _tGetSigFH );
       strtok(_sVal, "\n");
 
-      /* l_record ("Key authorized for user: '%s' ", user); */
-      /* l_record ("Key authorized. Fingerprint: '%s' ", _sVal ); */
+      /* syslog (LOG_NOTICE, "Key authorized for user: '%s' ", user); */
+      /* syslog (LOG_NOTICE, "Key authorized. Fingerprint: '%s' ", _sVal ); */
       pclose (_tGetSigFH);
 
-      if (__DEBUG__) l_record ("DEBUG: Removing temp file %s", _tmpfile);
-      if (remove (_tmpfile)) l_record ("Removing temp file %s FAILED.", (void**) _tmpfile);
+      if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG: Removing temp file %s", _tmpfile);
+      if (remove (_tmpfile)) syslog (LOG_NOTICE, "Removing temp file %s FAILED.", (void**) _tmpfile);
 
       return (_sVal);
 
