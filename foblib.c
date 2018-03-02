@@ -52,7 +52,7 @@
     char deviceNoExamine[256];
     int debug;
   };
-  char USBKEY_CONF[]="/etc/usbkey.conf";
+  #define USBKEY_CONF "/etc/usbkey.conf"
 #endif
 
 /* void    syslog (LOG_NOTICE, char *, ...); */
@@ -63,14 +63,17 @@ struct configuration *loadConfig(struct configuration *cfg) {
   char __buff[512];
   char *_key;
   char *_value;
+  if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: Loading Config file.");
   FILE *cfgFH=fopen(USBKEY_CONF, "r");
   if (! cfgFH) return (NULL);
   while ( fgets (linefromCFG, sizeof(linefromCFG), cfgFH )) {
     strtok(linefromCFG, "\n");
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have line from config file '%s' ", linefromCFG);
     sscanf(linefromCFG, "%s", __buff);
     /* remove comments and whitespace lines*/
     if (strlen(__buff)>4) continue;
     if (! __buff[0])    continue;
+    if (__buff[0]==' ')  continue;
     if (__buff[0]=='#')  continue;
     if (__buff[0]=='\n') continue;
     /* remove comments from end-of-line */
@@ -112,7 +115,10 @@ struct configuration *loadConfig(struct configuration *cfg) {
   }
 
   fclose(cfgFH);
-  return (NULL);
+  if (__DEBUG__) syslog(LOG_NOTICE, "configuration->checkRootKeys: %d ", cfg->checkRootKeys);
+  if (__DEBUG__) syslog(LOG_NOTICE, "configuration->debug: %d ", cfg->debug);
+  if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG:foblib: Config file loaded. ");
+  return (1);
 };
 
 int testForBadChar(char _testString[]){
