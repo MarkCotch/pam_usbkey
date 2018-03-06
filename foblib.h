@@ -31,7 +31,7 @@
 
   void    l_record (char *, ...);
   struct configuration *loadConfig(struct configuration *cfg);
-  char   *findKeyFOB (char *);
+  char   *findKeyFOB (char *, char *);
   char   *genRandomTempDir(char *);
   int     testForBadChar(const char *);
   char   *sanitizeString( char * );

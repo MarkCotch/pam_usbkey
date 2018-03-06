@@ -74,9 +74,9 @@ struct configuration *loadConfig(struct configuration *cfg) {
     sscanf(linefromCFG, "%s", __buff);
     /* remove comments and whitespace lines*/
     if (strlen(__buff)<4) continue;
-    if (! __buff[0])    continue;
-    if (__buff[0]=='#')  continue;
-    if (__buff[0]=='\n') continue;
+    if (! __buff[0])      continue;
+    if (__buff[0]=='#')   continue;
+    if (__buff[0]=='\n')  continue;
     /* remove comments from end-of-line */
     strtok(__buff, "#");
     strcpy(linefromCFG, __buff);
@@ -113,7 +113,27 @@ struct configuration *loadConfig(struct configuration *cfg) {
       }
       continue;
     }
-
+    if (strstr("authorized_keys", _key)) {
+      if (_value[0]) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set authorized_keys='%s' ", _value);
+        strcpy(cfg->authorized_keys, _value);
+      }
+      continue;
+    }
+    if (strstr("rootAuthorized_keys", _key)) {
+      if (_value[0]) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set rootAuthorized_keys='%s' ", _value);
+        strcpy(cfg->rootAuthorized_keys, _value);
+      }
+      continue;
+    }
+    if (strstr("deviceNoExamine", _key)) {
+      if (_value[0]) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set deviceNoExamine='%s' ", _value);
+        strcpy(cfg->deviceNoExamine, _value);
+      }
+      continue;
+    }
   }
 
   fclose(cfgFH);
@@ -159,7 +179,7 @@ char *sanitizeString(char _sanitizeThisString[] ){
     return (_sanitizeThisString);
 }
 
-char *findKeyFOB(char *KeyDevice ) {
+char *findKeyFOB(char *KeyDevice, char badlist[] ) {
   /* const char KeyDevice=[255] = {0}; */
   char __temp_path[255]={0};
   struct dirent *_dev_Device;
@@ -170,7 +190,11 @@ char *findKeyFOB(char *KeyDevice ) {
   DEVICELOOP: while ( _dev_Device=readdir(_devFP ) ) {
     /* Only check "Block" Devices*/
     if (_dev_Device->d_type != DT_BLK ) { continue; }
-    if (strstr(_dev_Device->d_name, "sr0")) { continue; }
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Checking Device: %s in list '%s' ", _dev_Device->d_name, badlist );
+    if (badlist && badlist[0] && strstr(badlist, _dev_Device->d_name)) {
+      if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Found device %s in list '%s' ...skipping. ", _dev_Device->d_name, badlist);
+      continue;
+    }
     /* Test if Media is present */
     FILE *_devTmpFH;
     /* Read first 31 bytes from block dev looking for SSH Key Signature.*/

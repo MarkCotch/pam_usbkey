@@ -20,7 +20,8 @@
 */
 
 #ifndef __PUK_VERSION__
-  #define __PUK_VERSION__  "0.9.1"
+  #define __PUK_VERSION__  "0.9.2"
+  #define __PUK_VERSION_D__ 0.9.2
   #define __AUTHOR__ "Mark Coccimiglio"
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #endif
@@ -49,13 +50,7 @@
 #define __APP__ pam_usbkey
 #define USBKEY_CONF "/etc/usbkey.conf"
 
-/* char authorized_keys[]=".ssh/authorized_keys"; */
-
-/* set to 0 to not check /root/.ssh/authorized_keys */
-
 struct configuration config = { 1, ".ssh/authorized_keys", "/root/.ssh/authorized_keys", "sr0 sr1 sr2 sr3", 0 } ;
-
-
 
 PAM_EXTERN int
  pam_sm_authenticate
@@ -76,12 +71,13 @@ PAM_EXTERN int
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
         }
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_authenticate called. Version: %s ", __PUK_VERSION__ );
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:debug=%d",config.debug);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:checkRootKeys=%d",config.checkRootKeys);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:authorized_keys=%s",config.authorized_keys);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:rootAuthorized_keys=%s",config.rootAuthorized_keys);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:deviceNoExamine=%s",config.deviceNoExamine);
-        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:debug=%d",config.debug);
-        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_authenticate called. ");
+
 
 
         /* Prime the Pseudo RNG. foblib.c needs this.*/
@@ -97,28 +93,29 @@ PAM_EXTERN int
           if (__DEBUG__) syslog (LOG_NOTICE, "We do not authenticate for su/sudo services.");
           return (PAM_CRED_INSUFFICIENT);
         }
-        /*
-        if (! _validServices(service) ) {
-          if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Requested Service '%s' not recognized. STOP.");
-          return (PAM_CRED_INSUFFICIENT);
-        }
-        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:Requested Service '%s' recognized...continue.");
-        */
+
 
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
-          char __tempNotice[256]={0};
-          sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user);
-          /* printf ("pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user); */
-          syslog (LOG_NOTICE, __tempNotice);
-          return (PAM_USER_UNKNOWN);
+          /* User name is not set.  Tell pam to get user name */
+          if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:No user provided,  Asking PAM for username.");
+          if ( pam_get_user (pamh, &user, NULL) != PAM_SUCCESS || !user || !*user ) {
+           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user);
+           return (PAM_USER_UNKNOWN);
+         }
         }
+
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have user: '%s' ...continue.", user);
 
         if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
-          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Provided token FAILED, is NULL, or Zero Length", service);
-          return (PAM_CRED_INSUFFICIENT);
+          /* Token not set.  Ask PAM for authtok. */
+          if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:No token provided,  Asking PAM for authtok");
+          if (pam_get_authtok(pamh, PAM_AUTHTOK, &pre_token, NULL ) != PAM_SUCCESS || !pre_token || !*pre_token) {
+            syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Provided token FAILED, is NULL, or Zero Length", service);
+            return (PAM_CRED_INSUFFICIENT);
+          }
         }
-        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have pre_token: %s ...continue.", pre_token);
+        /* This debug option is dangerous/insecure to keep in the live source.  If needed uncomment and rebuild binary */
+        /*if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have pre_token: %s ...continue.", pre_token);*/
 
         /* First test that the user is recognized by the system and has a home directory. (Sanity Checking) */
         struct passwd *_userInfo=getpwnam(user);
@@ -150,11 +147,12 @@ PAM_EXTERN int
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have non-NULL token ...continue.");
         /* Sanitize input from user.  Cannot accept passwords that contain ', ", *, \ or $  */
         sanitizeString(token);
-        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:we have sanitized token: '%s' ...continue.", token);
-
+        /* This is a dangerous/insecure debug note. Uncomment and rebuild if needed. */
+        /* if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:we have sanitized token: '%s' ...continue.", token); */
+        if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:we have sanitized token ...continue.");
         /* Find, load and "try" to decrypt private key(s) using provided password */
 
-        if (! findKeyFOB(keyFOB) ) {
+        if (! findKeyFOB(keyFOB, config.deviceNoExamine) ) {
           /* This represents a failure to to find an authentication
               FOB.  At this point we should fail out silently unless DEBUG.*/
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): No authentication key present.", service);
@@ -162,8 +160,7 @@ PAM_EXTERN int
         }
         if (__DEBUG__) sleep (5);
 
-        sprintf (_tempString, "pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
-        syslog (LOG_NOTICE,  _tempString );
+        syslog (LOG_NOTICE,"pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
@@ -198,9 +195,7 @@ PAM_EXTERN int
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have keyLabel : '%s' ", keyLabel);
 
         if ( strstr( keyLabel, "load failed" ) || strstr( keyLabel, "incorrect passphrase" ) ) {
-          char __tempNotice[256]={0};
-          sprintf (__tempNotice, "pam_usbkey(%s:auth): Bad passphrase for key '%s' ", service, keyFOB);
-          syslog (LOG_NOTICE, __tempNotice);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Bad passphrase for key '%s' ", service, keyFOB);
           return (PAM_AUTH_ERR);
         }
 
@@ -216,23 +211,23 @@ PAM_EXTERN int
         char userAuthorized_keys[256];
         sprintf (userAuthorized_keys, "%s/%s", _userInfo->pw_dir, config.authorized_keys);
         if (testResults=testKeys(userAuthorized_keys, privKey)) {
-          syslog (LOG_NOTICE, "pam_usbkey: Matching key found in '%s' ", userAuthorized_keys);
-          syslog (LOG_NOTICE, "pam_usbkey: success for user: '%s' ", user);
-          syslog (LOG_NOTICE, "pam_usbkey: Key authorized. Fingerprint: '%s' ", testResults );
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Matching key found in '%s' ", service, userAuthorized_keys);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): success for user: '%s' ", service, user);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Key authorized. Fingerprint: '%s' ", service, testResults );
           free (testResults);
           return (PAM_SUCCESS);
         }
         /* Test /root/.ssh/authorized_keys to see if our keys match. */
         if (config.checkRootKeys) {
           if (testResults=testKeys(config.rootAuthorized_keys, privKey ) ) {
-            syslog (LOG_NOTICE, "pam_usbkey: Matching key found in '%s' ", "/root/.ssh/authorized_keys");
-            syslog (LOG_NOTICE, "pam_usbkey: success for user: '%s' ", user);
-            syslog (LOG_NOTICE, "pam_usbkey: Key authorized. Fingerprint: '%s' ", testResults );
+            syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Matching key found in '%s' ", service, "/root/.ssh/authorized_keys");
+            syslog (LOG_NOTICE, "pam_usbkey(%s:auth): success for user: '%s' ", service, user);
+            syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Key authorized. Fingerprint: '%s' ", service, testResults );
             free (testResults);
             return (PAM_SUCCESS);
           }
         }
-        syslog (LOG_NOTICE, "pam_usbkey: Credentials for %s not found", user );
+        syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Credentials for %s not found", service, user );
         return (PAM_AUTHINFO_UNAVAIL);
 
   }
