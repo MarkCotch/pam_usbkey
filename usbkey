@@ -1,0 +1,8 @@
+Name: USB (ssh)Keyed authentication.
+Default: yes
+Priority: 256
+Auth-Type: Primary
+Auth:
+	[success=end default=ignore]	pam_usbkey.so
+Auth-Initial:
+	[success=end default=ignore]	pam_usbkey.so
