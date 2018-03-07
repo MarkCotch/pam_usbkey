@@ -71,43 +71,47 @@ struct configuration *loadConfig(struct configuration *cfg) {
   while ( fgets (linefromCFG, sizeof(linefromCFG), cfgFH )) {
     strtok(linefromCFG, "\n");
     if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have line from config file '%s' ", linefromCFG);
-    sscanf(linefromCFG, "%s", __buff);
+    strcpy (__buff, linefromCFG);
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have buff '%s' ", __buff);
     /* remove comments and whitespace lines*/
-    if (strlen(__buff)<4) continue;
-    if (! __buff[0])      continue;
-    if (__buff[0]=='#')   continue;
-    if (__buff[0]=='\n')  continue;
-    /* remove comments from end-of-line */
-    strtok(__buff, "#");
-    strcpy(linefromCFG, __buff);
+    strtok(linefromCFG, "#");
+    if (strlen(linefromCFG)<4) continue;
+    if (! linefromCFG[0])      continue;
+    if (linefromCFG[0]=='#')   continue;
+    if (linefromCFG[0]=='\n')  continue;
+
     /* breakout key/value pairs*/
-    _key=strtok(linefromCFG, "=\n");
-    _value=strtok(NULL, "=\n");
-    sscanf(_key, "%s", __buff);
+    _key=strtok(linefromCFG, "=");
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Key='%s'",_key);
+    _value=strtok(0, "=");
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Value='%s'",_value);
+    if (! _value) continue;
+    /* sscanf(_key, "%s", __buff);
     strcpy(_key,__buff);
     sscanf(_value, "%s", __buff);
-    strcpy(_value,__buff);
+    strcpy(_value,__buff); */
+    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Sanitized Key='%s' Value='%s'", _key, _value);
     /* NULL keys are ignored.*/
     if (! _key[0]) continue;
 
     /* Test for config choices*/
     if (strstr("checkRootKeys", _key)) {
-      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1') {
+      if (strstr(_value, "y") || strstr(_value, "Y") || strstr(_value, "1") ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
         cfg->checkRootKeys=1;
       }
-      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0') {
+      if (strstr(_value, "n") || strstr(_value, "n") || strstr(_value, "0") ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
         cfg->checkRootKeys=0;
       }
       continue;
     }
     if (strstr("debug", _key)) {
-      if (_value[0]=='y' || _value[0]=='Y' || _value[0]=='1') {
+      if (strstr(_value, "y") || strstr(_value, "Y") || strstr(_value, "1") ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE debug='%s' ", _value);
         cfg->debug=1;
       }
-      if (_value[0]=='n' || _value[0]=='N' || _value[0]=='0') {
+      if (strstr(_value, "n") || strstr(_value, "n") || strstr(_value, "0") ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set FALSE debug='%s' ", _value);
         cfg->debug=0;
       }
@@ -116,14 +120,16 @@ struct configuration *loadConfig(struct configuration *cfg) {
     if (strstr("authorized_keys", _key)) {
       if (_value[0]) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set authorized_keys='%s' ", _value);
-        strcpy(cfg->authorized_keys, _value);
+        sscanf (_value, "%s", cfg->authorized_keys);
+        /* strcpy(cfg->authorized_keys, _value); */
       }
       continue;
     }
     if (strstr("rootAuthorized_keys", _key)) {
       if (_value[0]) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set rootAuthorized_keys='%s' ", _value);
-        strcpy(cfg->rootAuthorized_keys, _value);
+        /* strcpy(cfg->rootAuthorized_keys, _value); */
+        sscanf (_value, "%s", cfg->rootAuthorized_keys);
       }
       continue;
     }
