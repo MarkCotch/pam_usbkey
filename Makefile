@@ -13,7 +13,7 @@ pam_usbkey: $(OBJ)
 	$(CC) -c -fPIC $@.c $(CFLAGS)
 	$(CC) -shared -o $@.so $@.o $< $(CFLAGS)
 
-test%: $(OBJ)
+test%: 
 	$(CC) -o a.$@ $@.c $< $(CFLAGS)
 
 clean:
