@@ -119,17 +119,18 @@ struct configuration *loadConfig(struct configuration *cfg) {
     }
     if (strstr("authorized_keys", _key)) {
       if (_value[0]) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set authorized_keys='%s' ", _value);
         sscanf (_value, "%s", cfg->authorized_keys);
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set authorized_keys='%s' ", cfg->authorized_keys);
         /* strcpy(cfg->authorized_keys, _value); */
       }
       continue;
     }
     if (strstr("rootAuthorized_keys", _key)) {
       if (_value[0]) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set rootAuthorized_keys='%s' ", _value);
-        /* strcpy(cfg->rootAuthorized_keys, _value); */
         sscanf (_value, "%s", cfg->rootAuthorized_keys);
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set rootAuthorized_keys='%s' ", cfg->rootAuthorized_keys);
+        /* strcpy(cfg->rootAuthorized_keys, _value); */
+
       }
       continue;
     }
