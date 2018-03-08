@@ -65,9 +65,7 @@ PAM_EXTERN int
         int             rval;
         char _tempString[256]={0};
 
-        /* load configuration at USBKEY_CONF This needs some work. */
-
-
+        /* load configuration at USBKEY_CONF */
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
         }
@@ -77,11 +75,6 @@ PAM_EXTERN int
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:authorized_keys=%s",config.authorized_keys);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:rootAuthorized_keys=%s",config.rootAuthorized_keys);
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate:deviceNoExamine=%s",config.deviceNoExamine);
-
-
-
-        /* Prime the Pseudo RNG. foblib.c needs this.*/
-        srand(getSeed());
 
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           syslog (LOG_NOTICE, "Unable to retrieve the PAM service name for :%s STOP.", service);
@@ -94,6 +87,14 @@ PAM_EXTERN int
           return (PAM_CRED_INSUFFICIENT);
         }
 
+        /* Try to find authentication FOB.  If no FOB present then its best not to dewll any further. */
+        if (! findKeyFOB(keyFOB, config.deviceNoExamine) ) {
+          /* This represents a failure to to find an authentication
+              FOB.  At this point we should log it and fail out.*/
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): No authentication key present.", service);
+          return (PAM_AUTHINFO_UNAVAIL);
+        }
+        syslog (LOG_NOTICE,"pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
 
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           /* User name is not set.  Tell pam to get user name */
@@ -103,7 +104,6 @@ PAM_EXTERN int
            return (PAM_USER_UNKNOWN);
          }
         }
-
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have user: '%s' ...continue.", user);
 
         if (pam_get_item(pamh, PAM_AUTHTOK, (const void **)(const void *)&pre_token ) != PAM_SUCCESS || !pre_token || !*pre_token) {
@@ -114,6 +114,9 @@ PAM_EXTERN int
             return (PAM_CRED_INSUFFICIENT);
           }
         }
+        /* Prime the Pseudo RNG. foblib.c needs this.*/
+        srand(getSeed());
+
         /* This debug option is dangerous/insecure to keep in the live source.  If needed uncomment and rebuild binary */
         /*if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have pre_token: %s ...continue.", pre_token);*/
 
@@ -130,8 +133,7 @@ PAM_EXTERN int
         DIR *_homeDIR;
         if (! (_homeDIR=opendir(_userInfo->pw_dir) ) ) {
           char __tempNotice[256]={0};
-          sprintf(__tempNotice, "pam_usbkey(%s:auth): User home directory: '%s' not found on system.", service, _userInfo->pw_dir);
-          syslog (LOG_NOTICE, __tempNotice);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): User home directory: '%s' not found on system. STOP.", service, _userInfo->pw_dir);
           closedir (_homeDIR);
           return (PAM_AUTHINFO_UNAVAIL);
         }
@@ -150,17 +152,8 @@ PAM_EXTERN int
         /* This is a dangerous/insecure debug note. Uncomment and rebuild if needed. */
         /* if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:we have sanitized token: '%s' ...continue.", token); */
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:we have sanitized token ...continue.");
-        /* Find, load and "try" to decrypt private key(s) using provided password */
 
-        if (! findKeyFOB(keyFOB, config.deviceNoExamine) ) {
-          /* This represents a failure to to find an authentication
-              FOB.  At this point we should fail out silently unless DEBUG.*/
-          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): No authentication key present.", service);
-          return (PAM_AUTHINFO_UNAVAIL);
-        }
-        if (__DEBUG__) sleep (5);
-
-        syslog (LOG_NOTICE,"pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
+        /* Load and "try" to decrypt private key(s) using provided password */
 
         /* Check FOB device permissions.  og-rwx is a necessity.*/
         /* for now just do it.  We can clean this up later. */
