@@ -20,8 +20,8 @@
 */
 
 #ifndef __PUK_VERSION__
-  #define __PUK_VERSION__  "0.9.2"
-  #define __PUK_VERSION_D__ 0.9.2
+  #define __PUK_VERSION__  "0.9.3"
+  #define __PUK_VERSION_D__ 0.9.3
   #define __AUTHOR__ "Mark Coccimiglio"
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
 #endif
@@ -65,6 +65,8 @@ PAM_EXTERN int
         int             rval;
         char _tempString[256]={0};
 
+        openlog(NULL , LOG_PID, LOG_AUTHPRIV);
+
         /* load configuration at USBKEY_CONF */
         if (! loadConfig( &config ) ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
@@ -78,12 +80,14 @@ PAM_EXTERN int
 
         if ( pam_get_item(pamh, PAM_SERVICE, (const void **)(const void *)&service ) != PAM_SUCCESS || !service || !*service) {
           syslog (LOG_NOTICE, "Unable to retrieve the PAM service name for :%s STOP.", service);
+          closelog();
           return (PAM_AUTH_ERR);
         }
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG:We have service '%s' ...continue. ", service);
 
         if ( strstr(service, "sudo") || strstr (service , "su")  ) {
           if (__DEBUG__) syslog (LOG_NOTICE, "We do not authenticate for su/sudo services.");
+          closelog();
           return (PAM_CRED_INSUFFICIENT);
         }
 
@@ -101,6 +105,7 @@ PAM_EXTERN int
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:No user provided,  Asking PAM for username.");
           if ( pam_get_user (pamh, &user, NULL) != PAM_SUCCESS || !user || !*user ) {
            syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Unable to retrieve the PAM user name, is NULL, or zero length, for '%s' ", service, user);
+           closelog();
            return (PAM_USER_UNKNOWN);
          }
         }
@@ -111,6 +116,7 @@ PAM_EXTERN int
           if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:No token provided,  Asking PAM for authtok");
           if (pam_get_authtok(pamh, PAM_AUTHTOK, &pre_token, NULL ) != PAM_SUCCESS || !pre_token || !*pre_token) {
             syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Provided token FAILED, is NULL, or Zero Length", service);
+            closelog();
             return (PAM_CRED_INSUFFICIENT);
           }
         }
@@ -126,6 +132,7 @@ PAM_EXTERN int
           char __tempNotice[256]={0};
           sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to locate user ID : '%s' STOP.", service, user);
           syslog (LOG_NOTICE, __tempNotice);
+          closelog();
           return (PAM_USER_UNKNOWN);
         }
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have validated user: '%s' ...continue.", user);
@@ -135,6 +142,7 @@ PAM_EXTERN int
           char __tempNotice[256]={0};
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): User home directory: '%s' not found on system. STOP.", service, _userInfo->pw_dir);
           closedir (_homeDIR);
+          closelog();
           return (PAM_AUTHINFO_UNAVAIL);
         }
         closedir (_homeDIR);
@@ -143,6 +151,7 @@ PAM_EXTERN int
         /* Zero length and NULL tokens/passwords are not accepted. */
         if (! strlen(pre_token)) {
           syslog (LOG_NOTICE, "Zero Length pre-Token. Not Accepted. '%d' STOP.", strlen(pre_token));
+          closelog();
           return (PAM_AUTHINFO_UNAVAIL);
         }
         strcpy(token, pre_token);
@@ -176,6 +185,7 @@ PAM_EXTERN int
         if (_ssh_keygenFP == NULL) {
           syslog (LOG_NOTICE, "Failed to run command: '%s' STOP.", cmdString);
           pclose(_ssh_keygenFP);
+          closelog();
           return(PAM_AUTHINFO_UNAVAIL);
         }
         fgets(keyLabel, 512, _ssh_keygenFP);
@@ -183,12 +193,14 @@ PAM_EXTERN int
 
         if (! keyLabel) {
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Derived pubkey from private returned no data.", service);
+          closelog();
           return(PAM_AUTHINFO_UNAVAIL);
         }
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:We have keyLabel : '%s' ", keyLabel);
 
         if ( strstr( keyLabel, "load failed" ) || strstr( keyLabel, "incorrect passphrase" ) ) {
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Bad passphrase for key '%s' ", service, keyFOB);
+          closelog();
           return (PAM_AUTH_ERR);
         }
 
@@ -208,6 +220,7 @@ PAM_EXTERN int
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): success for user: '%s' ", service, user);
           syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Key authorized. Fingerprint: '%s' ", service, testResults );
           free (testResults);
+          closelog();
           return (PAM_SUCCESS);
         }
         /* Test /root/.ssh/authorized_keys to see if our keys match. */
@@ -217,10 +230,12 @@ PAM_EXTERN int
             syslog (LOG_NOTICE, "pam_usbkey(%s:auth): success for user: '%s' ", service, user);
             syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Key authorized. Fingerprint: '%s' ", service, testResults );
             free (testResults);
+            closelog();
             return (PAM_SUCCESS);
           }
         }
         syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Credentials for %s not found", service, user );
+        closelog();
         return (PAM_AUTHINFO_UNAVAIL);
 
   }
@@ -230,10 +245,12 @@ PAM_EXTERN int
    (pam_handle_t *pamh,int flags,int argc, const char **argv)
     {
       /* load configuration at USBKEY_CONF */
+      openlog(NULL , LOG_PID, LOG_AUTHPRIV);
       if (! loadConfig( &config ) ) {
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
       }
       if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
+      closelog();
       return (PAM_SUCCESS);
 
     }
