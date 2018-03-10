@@ -246,9 +246,9 @@ PAM_EXTERN int
     {
       /* load configuration at USBKEY_CONF */
       openlog(NULL , LOG_PID, LOG_AUTHPRIV);
-      if (! loadConfig( &config ) ) {
+      /* if (! loadConfig( &config ) ) {
         if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey:pam_sm_authenticate: Unable to load usb_key.conf file.  Using defaults");
-      }
+      } */
       if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:pam_usbkey::pam_sm_setcred Does nothing.  Returning PAM_SUCCESS");
       closelog();
       return (PAM_SUCCESS);

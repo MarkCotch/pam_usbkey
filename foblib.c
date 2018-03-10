@@ -36,7 +36,8 @@
     #define TRUE (!FALSE)
   #endif
   #ifndef __DEBUG__
-    #define __DEBUG__ config.debug
+    #define __DEBUG__ config.debug 
+/*    #define __DEBUG__ 1 */
   #endif
   typedef struct sshKey sshKey;
   struct sshKey {
@@ -71,8 +72,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
   while ( fgets (linefromCFG, sizeof(linefromCFG), cfgFH )) {
     strtok(linefromCFG, "\n");
     if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have line from config file '%s' ", linefromCFG);
-    strcpy (__buff, linefromCFG);
-    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib: have buff '%s' ", __buff);
+
     /* remove comments and whitespace lines*/
     strtok(linefromCFG, "#");
     if (strlen(linefromCFG)<4) continue;
@@ -85,17 +85,13 @@ struct configuration *loadConfig(struct configuration *cfg) {
     if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Key='%s'",_key);
     _value=strtok(0, "=");
     if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Value='%s'",_value);
-    if (! _value) continue;
-    /* sscanf(_key, "%s", __buff);
-    strcpy(_key,__buff);
-    sscanf(_value, "%s", __buff);
-    strcpy(_value,__buff); */
-    if (__DEBUG__) syslog (LOG_NOTICE, "DEBUG:foblib:Sanitized Key='%s' Value='%s'", _key, _value);
-    /* NULL keys are ignored.*/
-    if (! _key[0]) continue;
+
+    /* NULL keys/values are ignored.*/
+    if ( ! _value || !*_value || !_key || !*_key ) continue;
 
     /* Test for config choices*/
     if (strstr("checkRootKeys", _key)) {
+
       if (strstr(_value, "y") || strstr(_value, "Y") || strstr(_value, "1") ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
         cfg->checkRootKeys=1;
