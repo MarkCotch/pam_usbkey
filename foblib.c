@@ -90,7 +90,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
     if ( ! _value || !*_value || !_key || !*_key ) continue;
 
     /* Test for config choices*/
-    if (strstr("checkRootKeys", _key)) {
+    if (strstr(_key, "checkRootKeys")) {
       sscanf(_value, "%s", __buff);
       if ( __buff[0]=='y' || __buff[0]=='Y' || __buff[0]=='1' ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", __buff);
@@ -102,7 +102,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
       }
       continue;
     }
-    if (strstr("debug", _key)) {
+    if (strstr(_key, "debug")) {
       sscanf(_value, "%s", __buff);
       if ( __buff[0]=='y' || __buff[0]=='Y' || __buff[0]=='1' ) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE debug='%s' ", __buff);
@@ -114,7 +114,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
       }
       continue;
     }
-    if (strstr("authorized_keys", _key)) {
+    if (strstr(_key, "authorized_keys")) {
       if (_value[0]) {
         sscanf (_value, "%s", cfg->authorized_keys);
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set authorized_keys='%s' ", cfg->authorized_keys);
@@ -122,7 +122,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
       }
       continue;
     }
-    if (strstr("rootAuthorized_keys", _key)) {
+    if (strstr(_key, "rootAuthorized_keys")) {
       if (_value[0]) {
         sscanf (_value, "%s", cfg->rootAuthorized_keys);
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set rootAuthorized_keys='%s' ", cfg->rootAuthorized_keys);
@@ -131,7 +131,7 @@ struct configuration *loadConfig(struct configuration *cfg) {
       }
       continue;
     }
-    if (strstr("deviceNoExamine", _key)) {
+    if (strstr(_key, "deviceNoExamine")) {
       if (_value[0]) {
         if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set deviceNoExamine='%s' ", _value);
         strcpy(cfg->deviceNoExamine, _value);
