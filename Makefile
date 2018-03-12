@@ -41,9 +41,9 @@ install_bin_"fedora":
 
 install_conf_"fedora":
 	install -v -o root -g root -m 755 usbkey.conf /etc/usbkey.conf
-	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/system-auth
+	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/system-auth
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/system-auth
-	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so try_first_pass/' /etc/pam.d/password-auth
+	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/password-auth
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/password-auth
 
 uninstall: uninstall_bin uninstall_conf
