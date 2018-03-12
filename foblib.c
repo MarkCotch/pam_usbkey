@@ -36,7 +36,7 @@
     #define TRUE (!FALSE)
   #endif
   #ifndef __DEBUG__
-    #define __DEBUG__ config.debug 
+    #define __DEBUG__ config.debug
 /*    #define __DEBUG__ 1 */
   #endif
   typedef struct sshKey sshKey;
@@ -91,24 +91,25 @@ struct configuration *loadConfig(struct configuration *cfg) {
 
     /* Test for config choices*/
     if (strstr("checkRootKeys", _key)) {
-
-      if (strstr(_value, "y") || strstr(_value, "Y") || strstr(_value, "1") ) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
+      sscanf(_value, "%s", __buff);
+      if ( __buff[0]=='y' || __buff[0]=='Y' || __buff[0]=='1' ) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", __buff);
         cfg->checkRootKeys=1;
       }
-      if (strstr(_value, "n") || strstr(_value, "n") || strstr(_value, "0") ) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", _value);
+      if ( __buff[0]=='n' || __buff[0]=='n' || __buff[0]=='0' ) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE checkRootKeys='%s' ", __buff);
         cfg->checkRootKeys=0;
       }
       continue;
     }
     if (strstr("debug", _key)) {
-      if (strstr(_value, "y") || strstr(_value, "Y") || strstr(_value, "1") ) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE debug='%s' ", _value);
+      sscanf(_value, "%s", __buff);
+      if ( __buff[0]=='y' || __buff[0]=='Y' || __buff[0]=='1' ) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set TRUE debug='%s' ", __buff);
         cfg->debug=1;
       }
-      if (strstr(_value, "n") || strstr(_value, "n") || strstr(_value, "0") ) {
-        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set FALSE debug='%s' ", _value);
+      if ( __buff[0]=='n' || __buff[0]=='n' || __buff[0]=='0' ) {
+        if (__DEBUG__) syslog(LOG_NOTICE, "DEBUG: set FALSE debug='%s' ", __buff);
         cfg->debug=0;
       }
       continue;
