@@ -279,3 +279,8 @@ PAM_EXTERN int
     (pam_handle_t *pamh, int flags, int argc, const char *argv[]) {
       return (PAM_SERVICE_ERR);
 }
+
+#ifdef PAM_MODULE_ENTRY
+ PAM_MODULE_ENTRY("pam_usbkey");
+#endif
+
