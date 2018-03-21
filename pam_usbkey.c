@@ -130,8 +130,7 @@ PAM_EXTERN int
         struct passwd *_userInfo=getpwnam(user);
         if (! _userInfo) {
           char __tempNotice[256]={0};
-          sprintf (__tempNotice, "pam_usbkey(%s:auth): Unable to locate user ID : '%s' STOP.", service, user);
-          syslog (LOG_NOTICE, __tempNotice);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): Unable to locate user ID : '%s' STOP.", service, user);
           closelog();
           return (PAM_USER_UNKNOWN);
         }
@@ -283,4 +282,3 @@ PAM_EXTERN int
 #ifdef PAM_MODULE_ENTRY
  PAM_MODULE_ENTRY("pam_usbkey");
 #endif
-
