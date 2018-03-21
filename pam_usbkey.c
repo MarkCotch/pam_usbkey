@@ -24,6 +24,7 @@
   #define __PUK_VERSION_D__ 0.9.3
   #define __AUTHOR__ "Mark Coccimiglio"
   #define __AUTHOR_EMAIL__ "mcoccimiglio@rice.edu"
+  #define __APP_NAME__ "pam_usbkey"
 #endif
 #ifndef __DEBUG__
   #define __DEBUG__ config.debug
@@ -280,5 +281,5 @@ PAM_EXTERN int
 }
 
 #ifdef PAM_MODULE_ENTRY
- PAM_MODULE_ENTRY("pam_usbkey");
+ PAM_MODULE_ENTRY(__APP_NAME__);
 #endif
