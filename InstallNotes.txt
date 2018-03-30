@@ -8,15 +8,12 @@ From package root type:
 make
 sudo make install
 
-This has been tested with Ubuntu 16.04LTS and RHEL7.
+OR if you want to preserve your usbkey.conf just install the binary files:
 
-Be carefull with the uninstaller in Ubuntu.  We have to manipulate other elements (specifically 
-pam_unix.so) of the PAM stack to make things work.  If you try to uninstall an improperly installed
-PAM Stack it WILL SCREW IT UP AND YOU WON'T BE ABLE TO LOGIN!!!  You have been warned.
-This document is dated but is relevant to the issue.  Specifically in handling "success=" which is were you have problems:
-https://www.digitalocean.com/community/tutorials/how-to-use-pam-to-configure-authentication-on-an-ubuntu-12-04-vps
+sudo make install_bin
+
+This has been tested with Ubuntu 16.04LTS and RHEL6/7.
 
 To uninstall the software type:
 
 make uninstall
-
