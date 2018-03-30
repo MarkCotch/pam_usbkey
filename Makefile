@@ -30,7 +30,7 @@ install_bin_"debian":
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
 
 install_conf_"debian":
-	install -v -o root -g root -m 755 usbkey /usr/share/pam-configs/usb_key
+	install -v -o root -g root -m 755 usbkey /usr/share/pam-configs/usbkey
 	pam-auth-update --package
 #	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$$1.($$2+1).$$3/ge' /etc/pam.d/common-auth
 #	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth    sufficient    pam_usbkey.so try_first_pass/'  /etc/pam.d/common-auth
@@ -58,8 +58,8 @@ uninstall_bin_"debian":
 
 
 uninstall_conf_"debian":
-	rm -vf /usr/share/pam-configs/usb_key
-	pam-auth-update --package
+	pam-auth-update --remove usbkey
+	rm -vf /usr/share/pam-configs/usbkey
 #	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$$1.($$2-1).$$3/ge' /etc/pam.d/common-auth
 #	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//'  /etc/pam.d/common-auth
 
