@@ -96,10 +96,10 @@ PAM_EXTERN int
         if (! findKeyFOB(keyFOB, config.deviceNoExamine) ) {
           /* This represents a failure to to find an authentication
               FOB.  At this point we should log it and fail out.*/
-          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): No authentication key present.", service);
+          syslog (LOG_NOTICE, "pam_usbkey(%s:auth): V%s No authentication key present.", service, __PUK_VERSION__ );
           return (PAM_AUTHINFO_UNAVAIL);
         }
-        syslog (LOG_NOTICE,"pam_usbkey(%s:auth): Found Authentication keyFOB: %s ", service, keyFOB);
+        syslog (LOG_NOTICE,"pam_usbkey(%s:auth): V%s Found Authentication keyFOB: %s ", service, __PUK_VERSION__ , keyFOB);
 
         if (pam_get_item( pamh, PAM_USER, (const void **)(const void *)&user ) != PAM_SUCCESS || !user || !*user) {
           /* User name is not set.  Tell pam to get user name */
