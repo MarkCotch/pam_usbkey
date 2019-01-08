@@ -30,7 +30,7 @@ install_bin_"debian":
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
 
 install_conf_"debian":
-	install -v -o root -g root -m 755 usbkey.conf /etc/usbkey.conf
+	test -s /etc/usbkey.conf || install -v -o root -g root -m 644 usbkey.conf /etc/usbkey.conf
 	install -v -o root -g root -m 755 usbkey /usr/share/pam-configs/usbkey
 	pam-auth-update --package
 #	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$$1.($$2+1).$$3/ge' /etc/pam.d/common-auth
@@ -41,7 +41,7 @@ install_bin_"fedora":
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
 
 install_conf_"fedora":
-	install -v -o root -g root -m 755 usbkey.conf /etc/usbkey.conf
+	test -s /etc/usbkey.conf || install -v -o root -g root -m 644 usbkey.conf /etc/usbkey.conf
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/system-auth
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/system-auth
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/password-auth
