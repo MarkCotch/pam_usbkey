@@ -20,7 +20,7 @@ test%:
 
 clean:
 	rm -vf *.o a.* *.so rpm/*
-	rmdir rpm/
+	test -d rpm && rmdir rpm
 
 install: install_bin install_conf
 
@@ -56,7 +56,8 @@ source: pam_usbkey
 	cp    -v  keytemp       $(NAME)-$(VERSION)/
 	cp    -v  pam_usbkey.so $(NAME)-$(VERSION)/
 	cp    -v  README.md     $(NAME)-$(VERSION)/
-	cp    -v  pam_usbkey-0.9.3.spec rpm/ 
+	cp    -v  usbkey.conf   $(NAME)-$(VERSION)/
+	cp    -v  pam_usbkey-0.9.3.spec        rpm/ 
 	tar    czvf rpm/$(NAME)-$(VERSION).tar.gz  $(NAME)-$(VERSION)/
 
 uninstall: uninstall_bin uninstall_conf
