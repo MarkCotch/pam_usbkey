@@ -1,0 +1,23 @@
+.\" Manpage for pam_usbkey
+.\" Contact mcoccimiglio@rice.edu to correct errors or typos.
+.TH man 8 "01 Sep 2020" "0.9.3" "pam_usbkey man page"
+.SH NAME
+pam_usbkey \- PAM Module to authenticate console login via SSH Keys
+.SH WEBSITE
+https://github.com/MarkCotch/pam_usbkey
+.SH SYNOPSIS
+n/a - Used by pam.  Takes no paramaters.
+.SH DESCRIPTION
+
+NOTE: This package currently works but is considered BETA.
+
+The design of the pam module is to utilize SSH Keys for local login authentication.  The basic premise is to install pass-phrase protected private SSH keys on a USB fob to authenticate with a computer.  If the corresponding Public SSH Key is present then access is granted.
+
+.SH OPTIONS
+The pam_usbkey does not take any options.
+.SH SEE ALSO
+pam(8)
+.SH BUGS
+None at that time.
+.SH AUTHOR
+Mark Coccimiglio (mark@coccimiglio.net)

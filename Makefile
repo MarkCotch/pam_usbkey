@@ -1,4 +1,6 @@
 include	/etc/os-release
+NAME = pam_usbkey
+VERSION= 0.9.3
 CC=gcc
 CFLAGS=-I. -lm
 DEPS = foblib.h
@@ -17,7 +19,8 @@ test%:
 	$(CC) -o a.$@ $@.c $< $(CFLAGS)
 
 clean:
-	rm -vf *.o a.* *.so
+	rm -vf *.o a.* *.so rpm/*
+	rmdir rpm/
 
 install: install_bin install_conf
 
@@ -46,6 +49,15 @@ install_conf_"fedora":
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/system-auth
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/password-auth
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/password-auth
+
+source: pam_usbkey
+	mkdir -vp rpm           $(NAME)-$(VERSION)
+	cp    -v  LICENSE       $(NAME)-$(VERSION)/
+	cp    -v  keytemp       $(NAME)-$(VERSION)/
+	cp    -v  pam_usbkey.so $(NAME)-$(VERSION)/
+	cp    -v  README.md     $(NAME)-$(VERSION)/
+	cp    -v  pam_usbkey-0.9.3.spec rpm/ 
+	tar    czvf rpm/$(NAME)-$(VERSION).tar.gz  $(NAME)-$(VERSION)/
 
 uninstall: uninstall_bin uninstall_conf
 
