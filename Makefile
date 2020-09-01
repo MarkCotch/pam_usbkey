@@ -19,8 +19,9 @@ test%:
 	$(CC) -o a.$@ $@.c $< $(CFLAGS)
 
 clean:
-	rm -vf *.o a.* *.so rpm/*
-	test -d rpm && rmdir rpm
+	rm -vf *.o a.* *.so rpm/* $(NAME)-$(VERSION)/*
+	( test -d $(NAME)-$(VERSION) && rmdir $(NAME)-$(VERSION) )
+	( test -d rpm && rmdir rpm )
 
 install: install_bin install_conf
 
