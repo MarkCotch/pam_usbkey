@@ -58,6 +58,7 @@ source: pam_usbkey
 	cp    -v  pam_usbkey.so $(NAME)-$(VERSION)/
 	cp    -v  README.md     $(NAME)-$(VERSION)/
 	cp    -v  usbkey.conf   $(NAME)-$(VERSION)/
+	cp    -v  pam_usbkey.8  $(NAME)-$(VERSION)/
 	cp    -v  pam_usbkey-0.9.3.spec        rpm/ 
 	tar    czvf rpm/$(NAME)-$(VERSION).tar.gz  $(NAME)-$(VERSION)/
 
