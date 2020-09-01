@@ -1,6 +1,6 @@
 %define		name		pam_usbkey
 %define		version		0.9.3
-%define		release		4%{?dist}
+%define		release		5%{?dist}
 
 %global		__os_install_post	%{nil}
 
