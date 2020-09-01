@@ -61,6 +61,11 @@ source: pam_usbkey
 	cp    -v  pam_usbkey-0.9.3.spec        rpm/ 
 	tar    czvf rpm/$(NAME)-$(VERSION).tar.gz  $(NAME)-$(VERSION)/
 
+rpmbuild: source
+	mkdir -vp ~/rpmbuild/{SPECS,SOURCES}
+	cp -v rpm/$(NAME)-$(VERSION).spec ~/rpmbuild/SPECS/
+	cp -v rpm/$(NAME)-$(VERSION).tar.gz ~/rpmbuild/SOURCES/
+
 uninstall: uninstall_bin uninstall_conf
 
 uninstall_bin: uninstall_bin_$(ID_LIKE)
