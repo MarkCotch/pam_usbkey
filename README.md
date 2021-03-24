@@ -46,7 +46,7 @@ a non-privileged user (non-"root").  We currently return PAM_CRED_INSUFFICIENT
 for these service.
 
 Required packages:
-bash, perl, at, OpenSSL(-devel), sed, pam-devel
+bash, perl, at, openssl(-devel), sed, pam-devel (el) libpam0g-dev (deb)
 
 The following scripts are included in this package:
 
