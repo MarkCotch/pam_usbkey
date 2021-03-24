@@ -29,22 +29,30 @@ install_bin: install_bin_$(ID_LIKE)
 
 install_conf: install_conf_$(ID_LIKE)
 
-install_bin_"debian":
+install_bin_"debian": install_bin_debian
+
+install_bin_debian:
 	install -v -o root -g root -m 755 pam_usbkey.so /lib/x86_64-linux-gnu/security/
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
 
-install_conf_"debian":
+install_conf_"debian": install_conf_debian
+
+install_conf_debian:
 	test -s /etc/usbkey.conf || install -v -o root -g root -m 644 usbkey.conf /etc/usbkey.conf
 	install -v -o root -g root -m 755 usbkey /usr/share/pam-configs/usbkey
 	pam-auth-update --package
 #	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$$1.($$2+1).$$3/ge' /etc/pam.d/common-auth
 #	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth    sufficient    pam_usbkey.so try_first_pass/'  /etc/pam.d/common-auth
 
-install_bin_"fedora":
+install_bin_"fedora": install_bin_fedora
+
+install_bin_fedora:
 	install -v -o root -g root -m 755 pam_usbkey.so /usr/lib64/security/
 	install -v -o root -g root -m 755 keytemp /usr/sbin/
 
-install_conf_"fedora":
+install_conf_"fedora": install_conf_fedora
+
+install_conf_fedora:
 	test -s /etc/usbkey.conf || install -v -o root -g root -m 644 usbkey.conf /etc/usbkey.conf
 	perl -i -pe 's/(^auth.*pam_unix.so.*$$)/$$1\nauth        sufficient    pam_usbkey.so /' /etc/pam.d/system-auth
 #	perl -i -pe 's/(^auth.*pam_localuser.so.*$$)/#$1/' /etc/pam.d/system-auth
@@ -73,23 +81,31 @@ uninstall_bin: uninstall_bin_$(ID_LIKE)
 
 uninstall_conf: uninstall_conf_$(ID_LIKE)
 
-uninstall_bin_"debian":
+uninstall_bin_"debian": uninstall_bin_debian
+
+uninstall_bin_debian:
 	rm -vf /usr/lib64/security/pam_usbkey.so
 	rm -vf /usr/sbin/keytemp
 
 
-uninstall_conf_"debian":
+uninstall_conf_"debian": uninstall_conf_debian
+
+uninstall_conf_debian:
 	pam-auth-update --remove usbkey
 	rm -vf /usr/share/pam-configs/usbkey
 	rm -vf /etc/usbkey.conf
 #	perl -i -pe 's/(^auth.*success=)(.*)( .*pam_unix.so.*$$)/$$1.($$2-1).$$3/ge' /etc/pam.d/common-auth
 #	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//'  /etc/pam.d/common-auth
 
-uninstall_bin_"fedora":
+uninstall_bin_"fedora": uninstall_bin_fedora
+
+uninstall_bin_fedora:
 	rm -vf /usr/lib64/security/pam_usbkey.so
 	rm -vf /usr/sbin/keytemp
 
-uninstall_conf_"fedora":
+uninstall_conf_"fedora": uninstall_conf_fedora
+
+uninstall_conf_fedora:
 	rm -vf /etc/usbkey.conf
 	perl -i -pe 's/^auth.*pam_usbkey.*\n$$//' /etc/pam.d/system-auth
 	perl -i -pe 's/^#(auth.*pam_localuser.so.*$$)/$1/' /etc/pam.d/system-auth
